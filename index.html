@@ -20,15 +20,67 @@
                 </div>
 
                 <button class="btn-start" onclick="startGame()">Iniciar Jogo</button>
+                <button class="btn-instructions" onclick="showInstructions()">📖 Como Jogar</button>
+            </div>
+        </div>
+
+        <!-- Tela de Instruções -->
+        <div id="instructionsScreen" class="screen">
+            <div class="instructions-container">
+                <h2>📖 Como Jogar</h2>
+                <div class="instructions-content">
+                    <h3>🎮 Objetivo</h3>
+                    <p>Ajude Alan a completar os desafios de segurança do trabalho em cada fase!</p>
+
+                    <h3>🎯 Fases</h3>
+                    <ul>
+                        <li><strong>Fase 1 (Estagiário):</strong> Aprenda a fazer nós de segurança (Nó 8 Simples e Duplo)</li>
+                        <li><strong>Fase 2 (Auxiliar):</strong> Colete todos os 5 EPIs que caem do céu em 60 segundos</li>
+                        <li><strong>Fase 3 (Assistente):</strong> Responda 5 perguntas sobre segurança do trabalho</li>
+                        <li><strong>Fase 4 (Técnico):</strong> Desbloqueada após completar o curso SENAI</li>
+                    </ul>
+
+                    <h3>🕹️ Controles - Fase 2 (Jogo de Coletar EPIs)</h3>
+                    <ul>
+                        <li><strong>← → Setas</strong> - Mover Alan esquerda/direita</li>
+                        <li><strong>A / D</strong> - Mover alternativo</li>
+                        <li><strong>Mouse</strong> - Mover Alan na direção do mouse (Desktop)</li>
+                        <li><strong>Joystick Virtual</strong> - Para celulares</li>
+                    </ul>
+
+                    <h3>💡 Dicas</h3>
+                    <ul>
+                        <li>Coletar todos os 5 EPIs antes do tempo acabar!</li>
+                        <li>Desvie dos detritos que caem do céu</li>
+                        <li>Cada EPI coletado aparecerá no Alan</li>
+                        <li>Fique atento - Maria está jogando as coisas!</li>
+                    </ul>
+                </div>
+                <button class="btn-back" onclick="backToMenu()">← Voltar</button>
             </div>
         </div>
 
         <!-- Tela de Seleção de Fases -->
-        <div id="phaseSelect" class="screen">
-            <div class="phases-container">
-                <h2>📍 Suas Fases de Carreira</h2>
-                <div class="phases-grid" id="phasesGrid"></div>
-                <button class="btn-back" onclick="backToMenu()">← Voltar</button>
+        <div id="phaseSelect" class="screen phase-select-new">
+            <canvas id="phaseSelectCanvas" class="phase-select-canvas"></canvas>
+            <div class="phases-path-overlay">
+                <div class="phases-header">
+                    <h2>🏗️ Jornada de Alan</h2>
+                    <p>FG Empreendimentos - Segurança do Trabalho</p>
+                </div>
+                <div class="phases-path" id="phasesPath"></div>
+                <div class="phases-footer">
+                    <button class="btn-back footer-btn" onclick="backToMenu()">← Menu</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de Informações da Fase -->
+        <div id="phaseDetailModal" class="modal">
+            <div class="modal-content">
+                <button class="modal-close" onclick="closePhaseDetail()">✕</button>
+                <div id="phaseDetailContent"></div>
+                <button class="btn-play-phase" onclick="playCurrentPhase()">▶️ Jogar Fase</button>
             </div>
         </div>
 
@@ -43,26 +95,6 @@
             </div>
         </div>
 
-        <!-- Mini-game de Perguntas -->
-        <div id="quizScreen" class="screen">
-            <div class="quiz-container">
-                <h3 id="quizTitle">Pergunta de Segurança</h3>
-                <p id="quizQuestion"></p>
-                <div class="quiz-options" id="quizOptions"></div>
-                <button class="btn-back" onclick="backToGame()">Sair do Quiz</button>
-            </div>
-        </div>
-
-        <!-- Mini-game de Nós -->
-        <div id="knotScreen" class="screen">
-            <div class="knot-container">
-                <h3>Aprenda o Nó 8</h3>
-                <canvas id="knotCanvas"></canvas>
-                <p id="knotInstruction"></p>
-                <button id="knotSubmit" class="btn-submit" onclick="checkKnot()" style="display: none;">Verificar</button>
-                <button class="btn-back" onclick="backToGame()">← Voltar</button>
-            </div>
-        </div>
 
         <!-- Tela de Conclusão -->
         <div id="completeScreen" class="screen">
@@ -71,6 +103,16 @@
                 <p id="completeMessage"></p>
                 <p id="nextPhase"></p>
                 <button class="btn-next" onclick="nextPhase()">Próxima Fase</button>
+            </div>
+        </div>
+
+        <!-- Tela de Game Over -->
+        <div id="gameOverScreen" class="screen">
+            <div class="game-over-container">
+                <h2>💔 Game Over</h2>
+                <p id="gameOverMessage"></p>
+                <button class="btn-retry" onclick="retryPhase()">Tentar Novamente</button>
+                <button class="btn-back" onclick="backToPhaseSelect()">Voltar às Fases</button>
             </div>
         </div>
 
@@ -115,6 +157,6 @@
 
     <script src="phases.js"></script>
     <script src="miniGames.js"></script>
-    <script src="game.js"></script>
+    <script src="game-epi.js"></script>
 </body>
 </html>
