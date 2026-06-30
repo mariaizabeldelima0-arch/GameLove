@@ -587,10 +587,19 @@ function startGame() {
 let selectedPhaseForDetail = null;
 
 function displayPhases() {
+    console.log('displayPhases: Starting...');
     const phasesPath = document.getElementById('phasesPath');
-    phasesPath.innerHTML = '';
+    if (!phasesPath) {
+        console.error('displayPhases: phasesPath element not found!');
+        return;
+    }
 
-    getAllPhases().forEach((phase) => {
+    phasesPath.innerHTML = '';
+    const phases = getAllPhases();
+    console.log(`displayPhases: Creating ${phases.length} phases`);
+
+    phases.forEach((phase) => {
+        console.log(`  Creating phase circle for: ${phase.title}`);
         const phaseCircle = document.createElement('div');
         phaseCircle.className = `phase-circle ${phase.unlocked ? 'unlocked' : 'locked'}`;
         phaseCircle.innerHTML = `
@@ -598,19 +607,29 @@ function displayPhases() {
             <div class="phase-number">${phase.id}</div>
         `;
 
-        phaseCircle.onclick = () => showPhaseDetail(phase);
+        phaseCircle.onclick = () => {
+            console.log(`Phase circle clicked: Phase ${phase.id} - ${phase.title}`);
+            showPhaseDetail(phase);
+        };
 
         phasesPath.appendChild(phaseCircle);
     });
+    console.log('displayPhases: Complete');
 }
 
 function showPhaseDetail(phase) {
+    console.log(`showPhaseDetail: Opening modal for Phase ${phase.id} - ${phase.title}`);
     selectedPhaseForDetail = phase;
 
     const statusClass = phase.unlocked ? 'unlocked' : 'locked';
     const statusText = phase.unlocked ? '✅ Desbloqueada' : '🔒 Bloqueada';
 
     const detailContent = document.getElementById('phaseDetailContent');
+    if (!detailContent) {
+        console.error('showPhaseDetail: phaseDetailContent element not found!');
+        return;
+    }
+
     detailContent.innerHTML = `
         <div class="detail-emoji">${phase.emoji}</div>
         <h2>${phase.title}</h2>
@@ -621,16 +640,25 @@ function showPhaseDetail(phase) {
     `;
 
     const playButton = document.querySelector('.btn-play-phase');
-    if (phase.unlocked) {
-        playButton.disabled = false;
-        playButton.textContent = '▶️ Jogar Fase';
+    if (!playButton) {
+        console.error('showPhaseDetail: btn-play-phase button not found!');
     } else {
-        playButton.disabled = true;
-        playButton.textContent = '🔒 Bloqueada';
+        if (phase.unlocked) {
+            playButton.disabled = false;
+            playButton.textContent = '▶️ Jogar Fase';
+        } else {
+            playButton.disabled = true;
+            playButton.textContent = '🔒 Bloqueada';
+        }
     }
 
     const modal = document.getElementById('phaseDetailModal');
+    if (!modal) {
+        console.error('showPhaseDetail: phaseDetailModal element not found!');
+        return;
+    }
     modal.classList.add('active');
+    console.log(`showPhaseDetail: Modal should now be visible`);
 }
 
 function closePhaseDetail() {
