@@ -51,6 +51,9 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
 function initGame() {
+    console.log('initGame: Iniciando...');
+    console.log('Canvas:', canvas);
+
     // Detectar se é mobile
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
@@ -61,6 +64,8 @@ function initGame() {
         canvas.width = window.innerWidth * 0.95;
         canvas.height = window.innerHeight * 0.8;
     }
+
+    console.log(`Canvas dimensões: ${canvas.width}x${canvas.height}`);
 
     gameState.player.x = canvas.width / 2;
     gameState.player.y = canvas.height - 150;
@@ -636,12 +641,15 @@ function closePhaseDetail() {
 
 function playCurrentPhase() {
     if (selectedPhaseForDetail && selectedPhaseForDetail.unlocked) {
+        console.log('Iniciando fase:', selectedPhaseForDetail.id);
         closePhaseDetail();
         playPhase(selectedPhaseForDetail.id);
     }
 }
 
 function playPhase(phaseId) {
+    console.log('playPhase chamada com ID:', phaseId);
+
     if (!isPhaseUnlocked(phaseId)) {
         showLockedPhase(phaseId);
         return;
@@ -652,7 +660,12 @@ function playPhase(phaseId) {
     document.getElementById('phaseInfo').textContent = `${phase.emoji} ${phase.title} - ${phase.date}`;
 
     showScreen('gameScreen');
-    initGame();
+
+    // Dar tempo para o CSS atualizar
+    setTimeout(() => {
+        console.log('Iniciando initGame()');
+        initGame();
+    }, 100);
 }
 
 function showLockedPhase(phaseId) {
