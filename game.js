@@ -192,7 +192,7 @@ function update() {
 
     // Aplicar velocidade
     gameState.player.x += gameState.player.velocityX;
-    gameState.player.velocityY += gameState.state;
+    gameState.player.velocityY += gameState.gravity;
     gameState.player.y += gameState.player.velocityY;
 
     // Colisões com plataformas
