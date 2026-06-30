@@ -51,8 +51,16 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
 function initGame() {
-    canvas.width = window.innerWidth * 0.95;
-    canvas.height = window.innerHeight * 0.8;
+    // Detectar se é mobile
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+    if (isMobile) {
+        canvas.width = Math.min(window.innerWidth - 20, 600);
+        canvas.height = Math.max(window.innerHeight - 300, 400);
+    } else {
+        canvas.width = window.innerWidth * 0.95;
+        canvas.height = window.innerHeight * 0.8;
+    }
 
     gameState.player.x = canvas.width / 2;
     gameState.player.y = canvas.height - 150;
@@ -84,6 +92,10 @@ function initGame() {
 function setupEventListeners() {
     const keys = {};
 
+    // Detectar se é mobile
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+    // Controles de teclado
     window.addEventListener('keydown', (e) => {
         keys[e.key] = true;
         updatePlayerPosition(keys);
@@ -93,11 +105,28 @@ function setupEventListeners() {
         keys[e.key] = false;
     });
 
-    canvas.addEventListener('mousemove', (e) => {
+    // Controle do mouse (desktop)
+    if (!isMobile) {
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            gameState.player.x = Math.max(gameState.player.width / 2, Math.min(canvas.width - gameState.player.width / 2, mouseX));
+        });
+    }
+
+    // Controle de toque (mobile)
+    canvas.addEventListener('touchmove', (e) => {
+        e.preventDefault();
         const rect = canvas.getBoundingClientRect();
-        const mouseX = e.clientX - rect.left;
-        gameState.player.x = Math.max(gameState.player.width / 2, Math.min(canvas.width - gameState.player.width / 2, mouseX));
+        const touch = e.touches[0];
+        const touchX = touch.clientX - rect.left;
+        gameState.player.x = Math.max(gameState.player.width / 2, Math.min(canvas.width - gameState.player.width / 2, touchX));
     });
+
+    // Setup do joystick virtual
+    if (isMobile) {
+        setupVirtualJoystick();
+    }
 
     window.addEventListener('resize', () => {
         canvas.width = window.innerWidth * 0.95;
@@ -113,6 +142,77 @@ function setupEventListeners() {
             gameState.player.x = Math.min(canvas.width - gameState.player.width / 2, gameState.player.x + speed);
         }
     }
+}
+
+function setupVirtualJoystick() {
+    const joystickBg = document.querySelector('.joystick-background');
+    const joystickStick = document.getElementById('joystickStick');
+    let isJoystickActive = false;
+    let joystickCenterX = 0;
+    let joystickCenterY = 0;
+    let joystickRadius = 0;
+
+    if (!joystickBg) return;
+
+    // Atualizar posição do joystick no início do jogo
+    const updateJoystickDimensions = () => {
+        const rect = joystickBg.getBoundingClientRect();
+        joystickCenterX = rect.left + rect.width / 2;
+        joystickCenterY = rect.top + rect.height / 2;
+        joystickRadius = rect.width / 2 - 10;
+    };
+
+    updateJoystickDimensions();
+    window.addEventListener('resize', updateJoystickDimensions);
+
+    // Touch start
+    joystickBg.addEventListener('touchstart', (e) => {
+        isJoystickActive = true;
+        e.preventDefault();
+    });
+
+    // Touch move
+    document.addEventListener('touchmove', (e) => {
+        if (!isJoystickActive || !gameState.gameActive) return;
+
+        const touch = e.touches[0];
+        const touchX = touch.clientX;
+        const touchY = touch.clientY;
+
+        const deltaX = touchX - joystickCenterX;
+        const deltaY = touchY - joystickCenterY;
+        const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+        let moveX = 0;
+        let moveY = 0;
+
+        if (distance > 10) {
+            const angle = Math.atan2(deltaX, deltaY);
+            const clampedDistance = Math.min(distance, joystickRadius);
+
+            moveX = Math.sin(angle) * clampedDistance;
+            moveY = Math.cos(angle) * clampedDistance;
+
+            // Atualizar posição do stick
+            joystickStick.style.transform = `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px))`;
+
+            // Mover player
+            const speed = 8;
+            if (moveX < -20) {
+                gameState.player.x = Math.max(gameState.player.width / 2, gameState.player.x - speed);
+            } else if (moveX > 20) {
+                gameState.player.x = Math.min(canvas.width - gameState.player.width / 2, gameState.player.x + speed);
+            }
+        } else {
+            joystickStick.style.transform = `translate(-50%, -50%)`;
+        }
+    }, { passive: false });
+
+    // Touch end
+    document.addEventListener('touchend', () => {
+        isJoystickActive = false;
+        joystickStick.style.transform = `translate(-50%, -50%)`;
+    });
 }
 
 function spawnObject() {

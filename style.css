@@ -211,6 +211,8 @@ button {
     background: #87CEEB;
     justify-content: center;
     align-items: center;
+    position: relative;
+    overflow: hidden;
 }
 
 canvas {
@@ -618,5 +620,215 @@ canvas {
     .instructions-container {
         max-width: 95%;
         padding: 20px;
+    }
+}
+
+/* Mobile Controls - Joystick Virtual */
+.mobile-controls {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    display: none;
+    z-index: 100;
+}
+
+.joystick-container {
+    width: 100px;
+    height: 100px;
+    position: relative;
+}
+
+.joystick-background {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    border: 3px solid rgba(255, 255, 255, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.joystick-stick {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4ECDC4, #44A08D);
+    position: absolute;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: transform 0.05s ease-out;
+}
+
+/* Mostrar joystick em dispositivos móveis */
+@media (max-width: 768px) {
+    .mobile-controls {
+        display: block;
+    }
+
+    canvas {
+        max-width: 100% !important;
+        max-height: calc(100vh - 250px) !important;
+    }
+
+    #gameUI {
+        width: 100%;
+        bottom: 120px;
+    }
+
+    .game-header {
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .phase-info {
+        font-size: 0.9em;
+        width: 100%;
+    }
+
+    .game-stats {
+        gap: 15px;
+        font-size: 1em;
+        width: 100%;
+        justify-content: space-around;
+    }
+
+    .stat {
+        padding: 6px 12px;
+        font-size: 0.9em;
+    }
+
+    .equipment-tracker {
+        padding: 12px;
+        margin-top: 5px;
+    }
+
+    .equipment-tracker h4 {
+        font-size: 0.9em;
+        margin-bottom: 8px;
+    }
+
+    .equipment-list {
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+        gap: 6px;
+    }
+
+    .equipment-item {
+        padding: 6px 8px;
+        font-size: 0.75em;
+    }
+
+    .instructions-container {
+        max-width: 98%;
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    .instructions-content h3 {
+        font-size: 1.1em;
+        margin-top: 15px;
+    }
+
+    .instructions-content p {
+        font-size: 0.95em;
+    }
+
+    .btn-start, .btn-instructions, .btn-back, .btn-next, .btn-retry {
+        padding: 12px 30px;
+        font-size: 1em;
+    }
+
+    .title {
+        font-size: 2em;
+    }
+
+    .subtitle {
+        font-size: 0.95em;
+    }
+
+    .phases-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .phase-card {
+        padding: 15px;
+    }
+
+    .phase-card .emoji {
+        font-size: 2.5em;
+    }
+
+    .phase-card h3 {
+        font-size: 1.1em;
+    }
+
+    .complete-container, .game-over-container, .locked-container, .quiz-container, .knot-container {
+        width: 95%;
+        margin: 0 auto;
+        padding: 20px;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+    .title {
+        font-size: 1.6em;
+    }
+
+    .subtitle {
+        font-size: 0.85em;
+    }
+
+    .player-info {
+        padding: 15px;
+    }
+
+    .player-info p {
+        font-size: 0.95em;
+    }
+
+    .btn-start, .btn-instructions {
+        padding: 10px 25px;
+        font-size: 0.95em;
+    }
+
+    .game-header {
+        padding: 8px;
+    }
+
+    .stat {
+        padding: 5px 10px;
+        font-size: 0.85em;
+    }
+
+    .equipment-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .equipment-item {
+        padding: 5px 6px;
+        font-size: 0.7em;
+    }
+
+    .joystick-container {
+        width: 80px;
+        height: 80px;
+    }
+
+    .joystick-stick {
+        width: 40px;
+        height: 40px;
+    }
+
+    #gameUI {
+        bottom: 100px;
+    }
+
+    .mobile-controls {
+        bottom: 10px;
+        left: 10px;
     }
 }
