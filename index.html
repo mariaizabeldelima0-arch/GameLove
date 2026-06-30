@@ -82,6 +82,35 @@
                 <button class="btn-back" onclick="backToPhaseSelect()">← Voltar</button>
             </div>
         </div>
+
+        <!-- Tela de Nó -->
+        <div id="knotScreen" class="screen">
+            <div class="knot-container">
+                <h2>🎯 Mini-Game: Nó de Segurança</h2>
+                <p id="knotInstruction">Desenhe um nó seguindo o padrão.</p>
+                <div class="knot-canvas-wrapper">
+                    <canvas id="knotCanvas" width="500" height="400"></canvas>
+                </div>
+                <div class="knot-buttons">
+                    <button class="btn-submit" onclick="checkKnot()">✓ Enviar</button>
+                    <button class="btn-clear" onclick="clearKnotCanvas()">🔄 Limpar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tela de Quiz -->
+        <div id="quizScreen" class="screen">
+            <div class="quiz-container">
+                <h2>📚 Mini-Game: Quiz de Segurança</h2>
+                <div class="quiz-progress">
+                    <p id="quizProgress">Pergunta 1 de 5</p>
+                </div>
+                <div class="quiz-question">
+                    <h3 id="quizQuestion">Pergunta</h3>
+                </div>
+                <div id="quizOptions" class="quiz-options"></div>
+            </div>
+        </div>
     </div>
 
     <script src="phases.js"></script>
