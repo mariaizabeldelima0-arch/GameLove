@@ -54,16 +54,16 @@ function initGame() {
     console.log('initGame: Iniciando...');
     console.log('Canvas:', canvas);
 
-    // Detectar se é mobile
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    // Obter dimensões do container
+    const gameScreen = document.getElementById('gameScreen');
+    const containerWidth = gameScreen.offsetWidth || window.innerWidth;
+    const containerHeight = gameScreen.offsetHeight || window.innerHeight;
 
-    if (isMobile) {
-        canvas.width = Math.min(window.innerWidth - 20, 600);
-        canvas.height = Math.max(window.innerHeight - 300, 400);
-    } else {
-        canvas.width = window.innerWidth * 0.95;
-        canvas.height = window.innerHeight * 0.8;
-    }
+    console.log(`Container: ${containerWidth}x${containerHeight}`);
+
+    // Definir dimensões do canvas
+    canvas.width = containerWidth;
+    canvas.height = containerHeight;
 
     console.log(`Canvas dimensões: ${canvas.width}x${canvas.height}`);
 
