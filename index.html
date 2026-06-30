@@ -77,17 +77,19 @@
         <!-- Canvas do Jogo -->
         <div id="gameScreen" class="screen">
             <canvas id="gameCanvas"></canvas>
-            <div id="gameUI">
-                <div class="game-header">
-                    <div class="phase-info" id="phaseInfo"></div>
-                    <div class="game-stats">
-                        <div class="stat">❤️ <span id="lifeCount">3</span></div>
-                        <div class="stat">⏱️ <span id="timeCount">60</span>s</div>
+            <div id="gameUI" class="game-ui-overlay">
+                <div class="game-header-compact">
+                    <div class="phase-info-compact" id="phaseInfo">Fase</div>
+                    <div class="game-stats-compact">
+                        <div class="stat-small">❤️ <span id="lifeCount">3</span></div>
+                        <div class="stat-small">⏱️ <span id="timeCount">60</span>s</div>
+                        <div class="stat-small">✅ <span id="equipmentProgress">0</span>/5</div>
                     </div>
                 </div>
-                <div class="equipment-tracker">
-                    <h4>Equipamentos:</h4>
-                    <div class="equipment-list" id="equipmentList"></div>
+
+                <!-- Equipment Tracker Compacto -->
+                <div class="equipment-tracker-compact" id="equipmentTracker">
+                    <div class="equipment-icons" id="equipmentList"></div>
                 </div>
             </div>
 

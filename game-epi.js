@@ -322,14 +322,22 @@ function updateEquipmentDisplay() {
     const list = document.getElementById('equipmentList');
     list.innerHTML = '';
 
+    // Mostrar apenas ícones compactos
     Object.values(EPIs).forEach(epi => {
         const isCollected = gameState.epiCollected.has(epi.id);
-        const status = isCollected ? '✅' : '❌';
+        const emoji = epi.name.split(' ')[0];
         const div = document.createElement('div');
         div.className = `equipment-item ${isCollected ? 'collected' : 'missing'}`;
-        div.textContent = `${status} ${epi.name}`;
+        div.textContent = emoji;
+        div.title = epi.name;
         list.appendChild(div);
     });
+
+    // Atualizar progresso
+    const progress = document.getElementById('equipmentProgress');
+    if (progress) {
+        progress.textContent = gameState.epiCollected.size;
+    }
 }
 
 function draw() {

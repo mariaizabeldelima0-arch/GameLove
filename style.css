@@ -472,70 +472,95 @@ canvas {
     margin: 8px 0;
 }
 
+/* Game UI Overlay - Posicionado sobre o canvas */
+.game-ui-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    pointer-events: none;
+    z-index: 50;
+}
+
 /* Game Screen Updates */
-.game-header {
+.game-header-compact {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0,0,0,0.7);
     color: white;
-    padding: 15px;
-    border-radius: 10px;
-    margin-bottom: 10px;
+    padding: 8px 12px;
+    margin: 5px;
+    border-radius: 8px;
+    pointer-events: auto;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
-.game-stats {
+.phase-info-compact {
+    font-size: 0.9em;
+    font-weight: bold;
+    min-width: 150px;
+}
+
+.game-stats-compact {
     display: flex;
-    gap: 20px;
-    font-size: 1.2em;
+    gap: 12px;
+    font-size: 1em;
     font-weight: bold;
 }
 
-.stat {
-    background: rgba(0,0,0,0.3);
-    padding: 8px 15px;
-    border-radius: 5px;
+.stat-small {
+    background: rgba(0,0,0,0.4);
+    padding: 4px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
 }
 
-.equipment-tracker {
-    background: rgba(255,255,255,0.95);
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+/* Equipment Tracker Compacto */
+.equipment-tracker-compact {
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.8);
+    padding: 8px 12px;
+    border-radius: 8px;
+    pointer-events: auto;
 }
 
-.equipment-tracker h4 {
-    color: var(--dark);
-    margin: 0 0 10px 0;
-    font-size: 1em;
-}
-
-.equipment-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 10px;
+.equipment-icons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
 }
 
 .equipment-item {
-    padding: 8px 12px;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border-radius: 6px;
-    font-size: 0.95em;
+    font-size: 1.2em;
     font-weight: bold;
-    text-align: center;
     transition: all 0.3s ease;
+    border: 2px solid transparent;
 }
 
 .equipment-item.missing {
-    background: #FFE6E6;
-    color: #CC0000;
-    border: 2px solid #CC0000;
+    background: rgba(255, 100, 100, 0.3);
+    border-color: rgba(255, 100, 100, 0.8);
+    opacity: 0.5;
 }
 
 .equipment-item.collected {
-    background: #E6F7E6;
-    color: #00AA00;
-    border: 2px solid #00AA00;
-    box-shadow: 0 0 10px rgba(0, 170, 0, 0.3);
+    background: rgba(0, 200, 100, 0.6);
+    border-color: #00FF00;
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
     animation: pulse 0.5s ease;
 }
 
@@ -668,55 +693,58 @@ canvas {
 
     canvas {
         max-width: 100% !important;
-        max-height: calc(100vh - 250px) !important;
-    }
-
-    #gameUI {
+        max-height: 100% !important;
         width: 100%;
-        bottom: 120px;
+        height: auto;
     }
 
-    .game-header {
-        flex-wrap: wrap;
-        gap: 10px;
-        padding: 10px;
+    #gameScreen {
+        flex-direction: column;
+        justify-content: center;
     }
 
-    .phase-info {
-        font-size: 0.9em;
+    .game-ui-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
     }
 
-    .game-stats {
-        gap: 15px;
-        font-size: 1em;
-        width: 100%;
-        justify-content: space-around;
+    .game-header-compact {
+        padding: 6px 8px;
+        margin: 3px;
+        gap: 6px;
     }
 
-    .stat {
-        padding: 6px 12px;
-        font-size: 0.9em;
+    .phase-info-compact {
+        font-size: 0.8em;
+        min-width: auto;
     }
 
-    .equipment-tracker {
-        padding: 12px;
-        margin-top: 5px;
+    .game-stats-compact {
+        gap: 8px;
+        font-size: 0.85em;
     }
 
-    .equipment-tracker h4 {
-        font-size: 0.9em;
-        margin-bottom: 8px;
+    .stat-small {
+        padding: 3px 8px;
+        font-size: 0.8em;
     }
 
-    .equipment-list {
-        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    .equipment-tracker-compact {
+        top: 35px;
+        padding: 6px 8px;
+    }
+
+    .equipment-icons {
         gap: 6px;
     }
 
     .equipment-item {
-        padding: 6px 8px;
-        font-size: 0.75em;
+        width: 30px;
+        height: 30px;
+        font-size: 1em;
+        border: 1px solid transparent;
     }
 
     .instructions-container {
@@ -795,22 +823,41 @@ canvas {
         font-size: 0.95em;
     }
 
-    .game-header {
-        padding: 8px;
+    .game-header-compact {
+        padding: 5px 6px;
+        margin: 2px;
+        gap: 4px;
     }
 
-    .stat {
-        padding: 5px 10px;
-        font-size: 0.85em;
+    .phase-info-compact {
+        font-size: 0.75em;
+        min-width: auto;
     }
 
-    .equipment-list {
-        grid-template-columns: repeat(2, 1fr);
+    .game-stats-compact {
+        gap: 6px;
+        font-size: 0.75em;
+    }
+
+    .stat-small {
+        padding: 2px 6px;
+        font-size: 0.7em;
+    }
+
+    .equipment-tracker-compact {
+        top: 30px;
+        padding: 4px 6px;
+    }
+
+    .equipment-icons {
+        gap: 4px;
     }
 
     .equipment-item {
-        padding: 5px 6px;
-        font-size: 0.7em;
+        width: 28px;
+        height: 28px;
+        font-size: 0.95em;
+        border: 1px solid transparent;
     }
 
     .joystick-container {
@@ -823,12 +870,12 @@ canvas {
         height: 40px;
     }
 
-    #gameUI {
-        bottom: 100px;
-    }
-
     .mobile-controls {
         bottom: 10px;
         left: 10px;
+    }
+
+    canvas {
+        height: calc(100vh - 150px) !important;
     }
 }
