@@ -65,12 +65,45 @@
             </div>
         </div>
 
-        <!-- Tela de Seleção de Fases -->
-        <div id="phaseSelect" class="screen">
-            <div class="phases-container">
-                <h2>📍 Suas Fases de Carreira</h2>
-                <div class="phases-grid" id="phasesGrid"></div>
-                <button class="btn-back" onclick="backToMenu()">← Voltar</button>
+        <!-- Tela de Seleção de Fases - Layout Tipo Candy Crush -->
+        <div id="phaseSelect" class="screen phase-select-new">
+            <div class="phases-path-container">
+                <!-- Header com informações do jogador -->
+                <div class="phases-header">
+                    <div class="player-header-info">
+                        <h2>🏗️ Jornada de Alan</h2>
+                        <p>FG Empreendimentos - Segurança do Trabalho</p>
+                    </div>
+                </div>
+
+                <!-- Caminho de Fases -->
+                <div class="phases-path-content">
+                    <!-- Decoração esquerda -->
+                    <div class="decoration-left">
+                        <div class="building-left">🏢</div>
+                        <div class="building-left-2">🏭</div>
+                    </div>
+
+                    <!-- Caminho das fases -->
+                    <svg class="phases-path-line" viewBox="0 0 100 400" preserveAspectRatio="none">
+                        <path d="M 50 10 Q 40 50, 50 100 Q 60 150, 50 200 Q 40 250, 50 300 Q 60 350, 50 390"
+                              stroke="#FFD700" stroke-width="20" fill="none" stroke-linecap="round"/>
+                    </svg>
+
+                    <div class="phases-path" id="phasesPath"></div>
+
+                    <!-- Decoração direita -->
+                    <div class="decoration-right">
+                        <div class="building-right">🏗️</div>
+                        <div class="building-right-2">🏢</div>
+                    </div>
+                </div>
+
+                <!-- Footer com navegação -->
+                <div class="phases-footer">
+                    <button class="btn-back footer-btn" onclick="backToMenu()">← Menu</button>
+                    <button class="btn-instructions footer-btn" onclick="showInstructions()">📖 Como Jogar</button>
+                </div>
             </div>
         </div>
 

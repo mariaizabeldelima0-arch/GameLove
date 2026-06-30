@@ -577,32 +577,47 @@ function startGame() {
 }
 
 function displayPhases() {
-    const phasesGrid = document.getElementById('phasesGrid');
-    phasesGrid.innerHTML = '';
+    const phasesPath = document.getElementById('phasesPath');
+    phasesPath.innerHTML = '';
 
-    getAllPhases().forEach(phase => {
-        const card = document.createElement('div');
-        card.className = `phase-card ${phase.locked ? 'locked' : ''}`;
+    getAllPhases().forEach((phase, index) => {
+        const phaseCardPath = document.createElement('div');
+        phaseCardPath.className = 'phase-card-path';
 
-        card.innerHTML = `
-            <div class="emoji">${phase.emoji}</div>
-            <h3>${phase.title}</h3>
-            <p>${phase.description}</p>
-            <div class="status">
-                <div class="${phase.unlocked ? 'unlocked' : 'locked-text'}">
-                    ${phase.unlocked ? '✅ Desbloqueada' : '🔒 Bloqueada'}
-                </div>
-                <div>${phase.date}</div>
-            </div>
+        const phaseCircle = document.createElement('div');
+        phaseCircle.className = `phase-circle ${phase.unlocked ? 'unlocked' : 'locked'}`;
+        phaseCircle.innerHTML = `
+            <div class="phase-emoji">${phase.emoji}</div>
+            <div class="phase-number">${phase.id}</div>
         `;
 
+        const phaseInfo = document.createElement('div');
+        phaseInfo.className = 'phase-info-path';
+
+        const statusClass = phase.unlocked ? 'unlocked' : 'locked';
+        const statusText = phase.unlocked ? '✅ Desbloqueada' : '🔒 Bloqueada';
+
+        phaseInfo.innerHTML = `
+            <h3>${phase.title}</h3>
+            <p>${phase.description}</p>
+            <p><strong>Data:</strong> ${phase.date}</p>
+            <div class="phase-status-badge ${statusClass}">${statusText}</div>
+        `;
+
+        phaseCardPath.appendChild(phaseCircle);
+        phaseCardPath.appendChild(phaseInfo);
+
         if (phase.unlocked) {
-            card.onclick = () => playPhase(phase.id);
+            phaseCardPath.style.cursor = 'pointer';
+            phaseCardPath.onclick = () => playPhase(phase.id);
+            phaseCircle.onclick = () => playPhase(phase.id);
         } else {
-            card.onclick = () => showLockedPhase(phase.id);
+            phaseCardPath.style.cursor = 'not-allowed';
+            phaseCardPath.onclick = () => showLockedPhase(phase.id);
+            phaseCircle.onclick = () => showLockedPhase(phase.id);
         }
 
-        phasesGrid.appendChild(card);
+        phasesPath.appendChild(phaseCardPath);
     });
 }
 
