@@ -670,8 +670,9 @@ function closePhaseDetail() {
 function playCurrentPhase() {
     if (selectedPhaseForDetail && selectedPhaseForDetail.unlocked) {
         console.log('Iniciando fase:', selectedPhaseForDetail.id);
-        closePhaseDetail();
-        playPhase(selectedPhaseForDetail.id);
+        const phaseId = selectedPhaseForDetail.id;  // Save phase ID before closing modal
+        closePhaseDetail();  // This sets selectedPhaseForDetail to null
+        playPhase(phaseId);  // Use the saved phase ID
     }
 }
 
