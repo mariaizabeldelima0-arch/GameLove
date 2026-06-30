@@ -453,6 +453,232 @@ canvas {
     margin: 20px 0;
 }
 
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    max-width: 500px;
+    width: 90%;
+    position: relative;
+    animation: popIn 0.3s ease;
+}
+
+.modal-close {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+    color: #999;
+    transition: color 0.3s ease;
+}
+
+.modal-close:hover {
+    color: #333;
+}
+
+.detail-emoji {
+    font-size: 3em;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.detail-badge {
+    display: inline-block;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+.detail-badge.unlocked {
+    background: #2ECC71;
+    color: white;
+}
+
+.detail-badge.locked {
+    background: #FF6B6B;
+    color: white;
+}
+
+/* Phase Select */
+#phaseSelect {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.phase-select-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.phases-path-overlay {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.phases-header {
+    position: absolute;
+    top: 20px;
+    text-align: center;
+    color: white;
+    z-index: 20;
+}
+
+.phases-header h2 {
+    font-size: 2.5em;
+    margin: 0;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.phases-header p {
+    font-size: 1.2em;
+    margin: 5px 0 0 0;
+    opacity: 0.9;
+}
+
+.phases-path {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    align-items: center;
+    margin-top: 100px;
+    margin-bottom: 80px;
+}
+
+.phase-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    z-index: 50 !important;
+    flex-shrink: 0;
+}
+
+.phase-circle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+.phase-circle.locked {
+    background: #ccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.phase-circle.unlocked {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+}
+
+.phase-emoji {
+    font-size: 2.5em;
+}
+
+.phase-number {
+    font-size: 0.9em;
+    font-weight: bold;
+    margin-top: 5px;
+    color: #333;
+}
+
+.phase-circle.unlocked .phase-number {
+    color: white;
+}
+
+.phases-footer {
+    position: absolute;
+    bottom: 20px;
+    display: flex;
+    gap: 15px;
+    z-index: 20;
+}
+
+.footer-btn {
+    padding: 12px 25px;
+    font-size: 0.95em;
+}
+
+/* Instructions Screen */
+#instructionsScreen {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    justify-content: center;
+    align-items: center;
+}
+
+.instructions-container {
+    background: white;
+    border-radius: 15px;
+    padding: 40px;
+    max-width: 700px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.instructions-container h2 {
+    color: var(--dark);
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+.instructions-content h3 {
+    color: var(--primary);
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+.instructions-content p, .instructions-content li {
+    color: #333;
+    font-size: 0.95em;
+    line-height: 1.6;
+}
+
+.instructions-content ul {
+    margin-left: 20px;
+}
+
 /* Animações */
 @keyframes slideIn {
     from {
