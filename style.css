@@ -128,76 +128,72 @@ button {
 
 /* Seleção de Fases - Novo Layout */
 #phaseSelect {
-    background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 100%);
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    overflow-y: auto;
+    position: relative;
+    overflow: hidden;
 }
 
 .phase-select-new {
     padding: 0;
+    position: relative;
 }
 
-.phases-path-container {
+.phase-select-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* Overlay com conteúdo */
+.phases-path-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
+    pointer-events: none;
+    z-index: 50;
 }
 
 /* Header das Fases */
 .phases-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.95), rgba(118, 75, 162, 0.95));
     color: white;
     padding: 20px;
     text-align: center;
     box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    pointer-events: auto;
 }
 
-.player-header-info h2 {
+.phases-header h2 {
     font-size: 1.8em;
     margin: 0 0 5px 0;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
 }
 
-.player-header-info p {
+.phases-header p {
     margin: 0;
     font-size: 0.95em;
     opacity: 0.9;
 }
 
-/* Conteúdo do Caminho */
-.phases-path-content {
+.phases-path {
     flex: 1;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    gap: 30px;
     padding: 20px;
     position: relative;
-    overflow-y: auto;
-}
-
-.phases-path-line {
-    position: absolute;
-    width: 80px;
-    height: 100%;
-    opacity: 0.2;
-    z-index: 5;
-}
-
-.phases-path {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 35px;
-    padding: 30px 20px;
-    position: relative;
-    z-index: 100;
+    z-index: 60;
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: 100%;
-    min-height: 500px;
+    pointer-events: auto;
+    overflow-y: auto;
 }
 
 /* Círculos de Fases em Coluna */
@@ -435,12 +431,14 @@ button {
 
 /* Footer */
 .phases-footer {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.95), rgba(118, 75, 162, 0.95));
     padding: 15px;
     display: flex;
     gap: 10px;
     justify-content: center;
     box-shadow: 0 -4px 6px rgba(0,0,0,0.2);
+    pointer-events: auto;
+    width: 100%;
 }
 
 .footer-btn {
@@ -448,6 +446,7 @@ button {
     max-width: 200px;
     padding: 12px 20px;
     font-size: 0.95em;
+    pointer-events: auto;
 }
 
 /* Animações */
@@ -949,63 +948,78 @@ canvas {
 /* Mostrar joystick em dispositivos móveis */
 /* Mobile responsiveness para Phase Select */
 @media (max-width: 768px) {
+    .phase-select-canvas {
+        display: block;
+    }
+
+    .phases-path-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
     .phases-header {
-        padding: 15px;
+        padding: 12px;
+        z-index: 100;
     }
 
-    .player-header-info h2 {
-        font-size: 1.4em;
+    .phases-header h2 {
+        font-size: 1.2em;
+        margin: 0 0 3px 0;
     }
 
-    .player-header-info p {
-        font-size: 0.85em;
+    .phases-header p {
+        font-size: 0.8em;
+        margin: 0;
     }
 
     .phases-path {
-        gap: 25px;
-        padding: 20px 10px;
+        gap: 20px;
+        padding: 15px 10px;
+        z-index: 60;
     }
 
     .phase-circle {
-        width: 75px;
-        height: 75px;
+        width: 70px;
+        height: 70px;
+        border: 3px solid white;
     }
 
     .phase-circle .phase-number {
-        font-size: 1.8em;
+        font-size: 1.6em;
     }
 
     .phase-circle .phase-emoji {
-        font-size: 1.4em;
+        font-size: 1.2em;
     }
 
     .phases-footer {
         gap: 8px;
-        padding: 12px;
+        padding: 10px;
+        z-index: 100;
     }
 
     .footer-btn {
-        max-width: 100%;
-        padding: 10px 15px;
-        font-size: 0.9em;
-    }
-
-    .decoration-left, .decoration-right {
-        font-size: 2em;
+        padding: 8px 12px;
+        font-size: 0.85em;
+        pointer-events: auto;
     }
 
     .modal-content {
-        padding: 25px;
-        border-radius: 15px;
+        padding: 20px;
+        border-radius: 12px;
     }
 
     #phaseDetailContent h2 {
-        font-size: 1.5em;
+        font-size: 1.3em;
     }
 
     .btn-play-phase {
-        padding: 12px;
-        font-size: 1em;
+        padding: 10px;
+        font-size: 0.95em;
+        pointer-events: auto;
     }
 
     .mobile-controls {

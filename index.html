@@ -65,36 +65,23 @@
             </div>
         </div>
 
-        <!-- Tela de Seleção de Fases - Layout Tipo Candy Crush -->
+        <!-- Tela de Seleção de Fases -->
         <div id="phaseSelect" class="screen phase-select-new">
-            <div class="phases-path-container">
-                <!-- Header com informações do jogador -->
+            <!-- Canvas para cenário -->
+            <canvas id="phaseSelectCanvas" class="phase-select-canvas"></canvas>
+
+            <!-- Conteúdo sobre o canvas -->
+            <div class="phases-path-overlay">
+                <!-- Header -->
                 <div class="phases-header">
-                    <div class="player-header-info">
-                        <h2>🏗️ Jornada de Alan</h2>
-                        <p>FG Empreendimentos - Segurança do Trabalho</p>
-                    </div>
+                    <h2>🏗️ Jornada de Alan</h2>
+                    <p>FG Empreendimentos - Segurança do Trabalho</p>
                 </div>
 
-                <!-- Caminho de Fases -->
-                <div class="phases-path-content">
-                    <!-- Decoração esquerda -->
-                    <div class="decoration-left">
-                        <div class="building-left">🏢</div>
-                        <div class="building-left-2">🏭</div>
-                    </div>
+                <!-- Fases em coluna -->
+                <div class="phases-path" id="phasesPath"></div>
 
-                    <!-- Fases em coluna -->
-                    <div class="phases-path" id="phasesPath"></div>
-
-                    <!-- Decoração direita -->
-                    <div class="decoration-right">
-                        <div class="building-right">🏗️</div>
-                        <div class="building-right-2">🏢</div>
-                    </div>
-                </div>
-
-                <!-- Footer com navegação -->
+                <!-- Footer -->
                 <div class="phases-footer">
                     <button class="btn-back footer-btn" onclick="backToMenu()">← Menu</button>
                     <button class="btn-instructions footer-btn" onclick="showInstructions()">📖 Como Jogar</button>

@@ -573,7 +573,10 @@ function nextPhase() {
 
 function startGame() {
     showScreen('phaseSelect');
-    displayPhases();
+    setTimeout(() => {
+        displayPhases();
+        setupPhaseSelectCanvas();
+    }, 100);
 }
 
 let selectedPhaseForDetail = null;
@@ -681,6 +684,149 @@ function showScreen(screenId) {
     document.getElementById(screenId).classList.add('active');
 }
 
+// Desenhar cenário da página de fases
+function setupPhaseSelectCanvas() {
+    const canvas = document.getElementById('phaseSelectCanvas');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+
+    // Ajustar tamanho do canvas
+    function resizeCanvas() {
+        const container = document.getElementById('phaseSelect');
+        canvas.width = container.offsetWidth;
+        canvas.height = container.offsetHeight;
+        drawPhaseSelectScene();
+    }
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+}
+
+function drawPhaseSelectScene() {
+    const canvas = document.getElementById('phaseSelectCanvas');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+
+    // Céu azul degradê
+    const skyGradient = ctx.createLinearGradient(0, 0, 0, height * 0.6);
+    skyGradient.addColorStop(0, '#87CEEB');
+    skyGradient.addColorStop(1, '#E0F6FF');
+    ctx.fillStyle = skyGradient;
+    ctx.fillRect(0, 0, width, height * 0.6);
+
+    // Areia
+    ctx.fillStyle = '#D2B48C';
+    ctx.fillRect(0, height * 0.6, width, height * 0.25);
+
+    // Mar
+    ctx.fillStyle = '#4A90E2';
+    ctx.fillRect(0, height * 0.85, width, height * 0.15);
+
+    // Nuvens
+    drawClouds(ctx, width, height);
+
+    // Sol
+    ctx.fillStyle = '#FFD700';
+    ctx.beginPath();
+    ctx.arc(width - 80, 60, 40, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Prédios esquerda
+    drawBuildings(ctx, 20, height * 0.3, 'left');
+
+    // Prédios direita
+    drawBuildings(ctx, width - 120, height * 0.3, 'right');
+
+    // Ondas do mar
+    drawWaves(ctx, width, height * 0.85);
+}
+
+function drawClouds(ctx, width, height) {
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+
+    // Nuvem 1
+    ctx.beginPath();
+    ctx.arc(width * 0.2, height * 0.15, 30, 0, Math.PI * 2);
+    ctx.arc(width * 0.25, height * 0.12, 35, 0, Math.PI * 2);
+    ctx.arc(width * 0.3, height * 0.15, 30, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Nuvem 2
+    ctx.beginPath();
+    ctx.arc(width * 0.7, height * 0.2, 25, 0, Math.PI * 2);
+    ctx.arc(width * 0.74, height * 0.17, 30, 0, Math.PI * 2);
+    ctx.arc(width * 0.78, height * 0.2, 25, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Nuvem 3
+    ctx.beginPath();
+    ctx.arc(width * 0.5, height * 0.08, 20, 0, Math.PI * 2);
+    ctx.arc(width * 0.53, height * 0.06, 25, 0, Math.PI * 2);
+    ctx.arc(width * 0.56, height * 0.08, 20, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+function drawBuildings(ctx, startX, startY, side) {
+    // Prédio 1 - maior
+    ctx.fillStyle = '#FF6B6B';
+    ctx.fillRect(startX, startY - 80, 60, 100);
+
+    // Janelas prédio 1
+    ctx.fillStyle = '#FFD700';
+    for (let i = 0; i < 4; i++) {
+        for (let j = 0; j < 3; j++) {
+            ctx.fillRect(startX + 8 + j * 18, startY - 70 + i * 20, 10, 10);
+        }
+    }
+
+    // Prédio 2 - médio
+    ctx.fillStyle = '#4ECDC4';
+    ctx.fillRect(startX + 70, startY - 60, 50, 80);
+
+    // Janelas prédio 2
+    ctx.fillStyle = '#FFD700';
+    for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 2; j++) {
+            ctx.fillRect(startX + 78 + j * 18, startY - 50 + i * 20, 10, 10);
+        }
+    }
+
+    // Prédio 3 - guindaste
+    ctx.fillStyle = '#8B4513';
+    ctx.fillRect(startX + 30, startY - 40, 8, 40);
+    ctx.strokeStyle = '#8B4513';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(startX + 34, startY - 40);
+    ctx.lineTo(startX + 70, startY - 35);
+    ctx.stroke();
+}
+
+function drawWaves(ctx, width, waveY) {
+    ctx.strokeStyle = 'rgba(100, 150, 220, 0.4)';
+    ctx.lineWidth = 2;
+
+    for (let i = 0; i < 3; i++) {
+        ctx.beginPath();
+        ctx.moveTo(0, waveY + i * 15);
+        for (let x = 0; x <= width; x += 20) {
+            ctx.quadraticCurveTo(x + 10, waveY - 5 + i * 15, x + 20, waveY + i * 15);
+        }
+        ctx.stroke();
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     showScreen('mainMenu');
+
+    // Quando mostrar a tela de fases, inicializar o canvas
+    setTimeout(() => {
+        if (document.getElementById('phaseSelect').classList.contains('active')) {
+            setupPhaseSelectCanvas();
+        }
+    }, 100);
 });
