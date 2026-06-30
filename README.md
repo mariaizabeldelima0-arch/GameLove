@@ -88,6 +88,14 @@ Este jogo serve como:
 - 🎮 Entretenimento gamificado
 - 💼 Reconhecimento do trabalho em FG Empreendimentos
 
+## 🚀 Próximas Melhorias Potenciais
+
+- [ ] Sons e música de fundo
+- [ ] Animações mais fluidas
+- [ ] Multiplayer local
+- [ ] Mais desafios de nós
+- [ ] Sistema de pontuação global
+
 ## 📞 Empresa
 
 **FG Empreendimentos**

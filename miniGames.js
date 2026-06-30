@@ -26,6 +26,11 @@ function displayQuizQuestion() {
     const question = currentPhaseQuiz[currentQuizQuestion];
     document.getElementById('quizQuestion').textContent = question.question;
 
+    const progressDiv = document.getElementById('quizProgress');
+    if (progressDiv) {
+        progressDiv.textContent = `Pergunta ${currentQuizQuestion + 1} de ${currentPhaseQuiz.length}`;
+    }
+
     const optionsDiv = document.getElementById('quizOptions');
     optionsDiv.innerHTML = '';
 
@@ -254,4 +259,32 @@ function showNotification(message) {
         div.style.animation = 'fadeOut 0.3s ease';
         setTimeout(() => div.remove(), 300);
     }, 1500);
+}
+
+function showKnotScreen() {
+    showScreen('knotScreen');
+}
+
+function showQuizScreen() {
+    showScreen('quizScreen');
+}
+
+function backToGame() {
+    // Check if we need to move to the next knot
+    if (currentGameState.knotsCompleted !== undefined) {
+        currentGameState.knotsCompleted++;
+        if (currentGameState.knotsCompleted < currentGameState.totalKnots) {
+            // Start the double knot challenge
+            startKnotGame(currentGameState.currentPhaseId, 'double');
+            return;
+        } else {
+            // All knots completed, move to complete phase
+            completePhase(currentGameState.currentPhaseId);
+            showPhaseComplete();
+            return;
+        }
+    }
+
+    // For quiz, go back to phase select
+    showScreen('phaseSelect');
 }

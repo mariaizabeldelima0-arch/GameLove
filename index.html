@@ -30,35 +30,30 @@
                 <h2>📖 Como Jogar</h2>
                 <div class="instructions-content">
                     <h3>🎮 Objetivo</h3>
-                    <p>Ajude Alan a coletar todos os Equipamentos de Proteção Individual (EPIs) que caem do céu!</p>
+                    <p>Ajude Alan a completar os desafios de segurança do trabalho em cada fase!</p>
 
-                    <h3>🕹️ Controles</h3>
+                    <h3>🎯 Fases</h3>
+                    <ul>
+                        <li><strong>Fase 1 (Estagiário):</strong> Aprenda a fazer nós de segurança (Nó 8 Simples e Duplo)</li>
+                        <li><strong>Fase 2 (Auxiliar):</strong> Colete todos os 5 EPIs que caem do céu em 60 segundos</li>
+                        <li><strong>Fase 3 (Assistente):</strong> Responda 5 perguntas sobre segurança do trabalho</li>
+                        <li><strong>Fase 4 (Técnico):</strong> Desbloqueada após completar o curso SENAI</li>
+                    </ul>
+
+                    <h3>🕹️ Controles - Fase 2 (Jogo de Coletar EPIs)</h3>
                     <ul>
                         <li><strong>← → Setas</strong> - Mover Alan esquerda/direita</li>
                         <li><strong>A / D</strong> - Mover alternativo</li>
-                        <li><strong>Mouse</strong> - Mover Alan na direção do mouse</li>
+                        <li><strong>Mouse</strong> - Mover Alan na direção do mouse (Desktop)</li>
+                        <li><strong>Joystick Virtual</strong> - Para celulares</li>
                     </ul>
-
-                    <h3>⚠️ Cuidado!</h3>
-                    <p>Detritos caem do céu (pregos, madeira, vidro)! Evite-os ou perca vida!</p>
-
-                    <h3>🛡️ Equipamentos para Coletar</h3>
-                    <ul>
-                        <li>🥽 <strong>Óculos de Proteção</strong> - Protege os olhos</li>
-                        <li>🧤 <strong>Luvas</strong> - Protege as mãos</li>
-                        <li>🎽 <strong>Cinto de Segurança</strong> - Proteção corporal</li>
-                        <li>👂 <strong>Protetor Auricular</strong> - Protege audição</li>
-                        <li>🟡 <strong>Capacete</strong> - Proteção de cabeça</li>
-                    </ul>
-
-                    <h3>⭐ Como Completar a Fase</h3>
-                    <p>Colete TODOS os 5 EPIs antes do tempo acabar! Cada EPI coletado aparecerá no Alan.</p>
 
                     <h3>💡 Dicas</h3>
                     <ul>
-                        <li>Fique atento - Maria (💙) está jogando as coisas!</li>
-                        <li>Quanto mais rápido coletar, melhor!</li>
-                        <li>Não deixe Alan ser atingido pelos detritos!</li>
+                        <li>Coletar todos os 5 EPIs antes do tempo acabar!</li>
+                        <li>Desvie dos detritos que caem do céu</li>
+                        <li>Cada EPI coletado aparecerá no Alan</li>
+                        <li>Fique atento - Maria está jogando as coisas!</li>
                     </ul>
                 </div>
                 <button class="btn-back" onclick="backToMenu()">← Voltar</button>
@@ -67,24 +62,15 @@
 
         <!-- Tela de Seleção de Fases -->
         <div id="phaseSelect" class="screen phase-select-new">
-            <!-- Canvas para cenário -->
             <canvas id="phaseSelectCanvas" class="phase-select-canvas"></canvas>
-
-            <!-- Conteúdo sobre o canvas -->
             <div class="phases-path-overlay">
-                <!-- Header -->
                 <div class="phases-header">
                     <h2>🏗️ Jornada de Alan</h2>
                     <p>FG Empreendimentos - Segurança do Trabalho</p>
                 </div>
-
-                <!-- Fases em coluna -->
                 <div class="phases-path" id="phasesPath"></div>
-
-                <!-- Footer -->
                 <div class="phases-footer">
                     <button class="btn-back footer-btn" onclick="backToMenu()">← Menu</button>
-                    <button class="btn-instructions footer-btn" onclick="showInstructions()">📖 Como Jogar</button>
                 </div>
             </div>
         </div>
@@ -101,31 +87,14 @@
         <!-- Canvas do Jogo -->
         <div id="gameScreen" class="screen">
             <canvas id="gameCanvas"></canvas>
-            <div id="gameUI" class="game-ui-overlay">
-                <div class="game-header-compact">
-                    <div class="phase-info-compact" id="phaseInfo">Fase</div>
-                    <div class="game-stats-compact">
-                        <div class="stat-small">❤️ <span id="lifeCount">3</span></div>
-                        <div class="stat-small">⏱️ <span id="timeCount">60</span>s</div>
-                        <div class="stat-small">✅ <span id="equipmentProgress">0</span>/5</div>
-                    </div>
-                </div>
-
-                <!-- Equipment Tracker Compacto -->
-                <div class="equipment-tracker-compact" id="equipmentTracker">
-                    <div class="equipment-icons" id="equipmentList"></div>
-                </div>
-            </div>
-
-            <!-- Joystick Virtual para Mobile -->
-            <div id="mobileControls" class="mobile-controls">
-                <div class="joystick-container">
-                    <div class="joystick-background">
-                        <div class="joystick-stick" id="joystickStick"></div>
-                    </div>
+            <div id="gameUI">
+                <div class="phase-info" id="phaseInfo"></div>
+                <div class="controls-info">
+                    ← → para mover | ESPAÇO para pular | MOUSE para mini-games
                 </div>
             </div>
         </div>
+
 
         <!-- Tela de Conclusão -->
         <div id="completeScreen" class="screen">
@@ -155,9 +124,39 @@
                 <button class="btn-back" onclick="backToPhaseSelect()">← Voltar</button>
             </div>
         </div>
+
+        <!-- Tela de Nó -->
+        <div id="knotScreen" class="screen">
+            <div class="knot-container">
+                <h2>🎯 Mini-Game: Nó de Segurança</h2>
+                <p id="knotInstruction">Desenhe um nó seguindo o padrão.</p>
+                <div class="knot-canvas-wrapper">
+                    <canvas id="knotCanvas" width="500" height="400"></canvas>
+                </div>
+                <div class="knot-buttons">
+                    <button class="btn-submit" onclick="checkKnot()">✓ Enviar</button>
+                    <button class="btn-clear" onclick="clearKnotCanvas()">🔄 Limpar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tela de Quiz -->
+        <div id="quizScreen" class="screen">
+            <div class="quiz-container">
+                <h2>📚 Mini-Game: Quiz de Segurança</h2>
+                <div class="quiz-progress">
+                    <p id="quizProgress">Pergunta 1 de 5</p>
+                </div>
+                <div class="quiz-question">
+                    <h3 id="quizQuestion">Pergunta</h3>
+                </div>
+                <div id="quizOptions" class="quiz-options"></div>
+            </div>
+        </div>
     </div>
 
     <script src="phases.js"></script>
+    <script src="miniGames.js"></script>
     <script src="game-epi.js"></script>
 </body>
 </html>
