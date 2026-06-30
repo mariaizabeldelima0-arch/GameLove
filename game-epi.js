@@ -576,14 +576,13 @@ function startGame() {
     displayPhases();
 }
 
+let selectedPhaseForDetail = null;
+
 function displayPhases() {
     const phasesPath = document.getElementById('phasesPath');
     phasesPath.innerHTML = '';
 
-    getAllPhases().forEach((phase, index) => {
-        const phaseCardPath = document.createElement('div');
-        phaseCardPath.className = 'phase-card-path';
-
+    getAllPhases().forEach((phase) => {
         const phaseCircle = document.createElement('div');
         phaseCircle.className = `phase-circle ${phase.unlocked ? 'unlocked' : 'locked'}`;
         phaseCircle.innerHTML = `
@@ -591,34 +590,52 @@ function displayPhases() {
             <div class="phase-number">${phase.id}</div>
         `;
 
-        const phaseInfo = document.createElement('div');
-        phaseInfo.className = 'phase-info-path';
+        phaseCircle.onclick = () => showPhaseDetail(phase);
 
-        const statusClass = phase.unlocked ? 'unlocked' : 'locked';
-        const statusText = phase.unlocked ? '✅ Desbloqueada' : '🔒 Bloqueada';
-
-        phaseInfo.innerHTML = `
-            <h3>${phase.title}</h3>
-            <p>${phase.description}</p>
-            <p><strong>Data:</strong> ${phase.date}</p>
-            <div class="phase-status-badge ${statusClass}">${statusText}</div>
-        `;
-
-        phaseCardPath.appendChild(phaseCircle);
-        phaseCardPath.appendChild(phaseInfo);
-
-        if (phase.unlocked) {
-            phaseCardPath.style.cursor = 'pointer';
-            phaseCardPath.onclick = () => playPhase(phase.id);
-            phaseCircle.onclick = () => playPhase(phase.id);
-        } else {
-            phaseCardPath.style.cursor = 'not-allowed';
-            phaseCardPath.onclick = () => showLockedPhase(phase.id);
-            phaseCircle.onclick = () => showLockedPhase(phase.id);
-        }
-
-        phasesPath.appendChild(phaseCardPath);
+        phasesPath.appendChild(phaseCircle);
     });
+}
+
+function showPhaseDetail(phase) {
+    selectedPhaseForDetail = phase;
+
+    const statusClass = phase.unlocked ? 'unlocked' : 'locked';
+    const statusText = phase.unlocked ? '✅ Desbloqueada' : '🔒 Bloqueada';
+
+    const detailContent = document.getElementById('phaseDetailContent');
+    detailContent.innerHTML = `
+        <div class="detail-emoji">${phase.emoji}</div>
+        <h2>${phase.title}</h2>
+        <p><strong>${phase.company}</strong></p>
+        <p>${phase.description}</p>
+        <p><strong>Data:</strong> ${phase.date}</p>
+        <div class="detail-badge ${statusClass}">${statusText}</div>
+    `;
+
+    const playButton = document.querySelector('.btn-play-phase');
+    if (phase.unlocked) {
+        playButton.disabled = false;
+        playButton.textContent = '▶️ Jogar Fase';
+    } else {
+        playButton.disabled = true;
+        playButton.textContent = '🔒 Bloqueada';
+    }
+
+    const modal = document.getElementById('phaseDetailModal');
+    modal.classList.add('active');
+}
+
+function closePhaseDetail() {
+    const modal = document.getElementById('phaseDetailModal');
+    modal.classList.remove('active');
+    selectedPhaseForDetail = null;
+}
+
+function playCurrentPhase() {
+    if (selectedPhaseForDetail && selectedPhaseForDetail.unlocked) {
+        closePhaseDetail();
+        playPhase(selectedPhaseForDetail.id);
+    }
 }
 
 function playPhase(phaseId) {

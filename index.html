@@ -84,12 +84,7 @@
                         <div class="building-left-2">🏭</div>
                     </div>
 
-                    <!-- Caminho das fases -->
-                    <svg class="phases-path-line" viewBox="0 0 100 400" preserveAspectRatio="none">
-                        <path d="M 50 10 Q 40 50, 50 100 Q 60 150, 50 200 Q 40 250, 50 300 Q 60 350, 50 390"
-                              stroke="#FFD700" stroke-width="20" fill="none" stroke-linecap="round"/>
-                    </svg>
-
+                    <!-- Fases em coluna -->
                     <div class="phases-path" id="phasesPath"></div>
 
                     <!-- Decoração direita -->
@@ -104,6 +99,15 @@
                     <button class="btn-back footer-btn" onclick="backToMenu()">← Menu</button>
                     <button class="btn-instructions footer-btn" onclick="showInstructions()">📖 Como Jogar</button>
                 </div>
+            </div>
+        </div>
+
+        <!-- Modal de Informações da Fase -->
+        <div id="phaseDetailModal" class="modal">
+            <div class="modal-content">
+                <button class="modal-close" onclick="closePhaseDetail()">✕</button>
+                <div id="phaseDetailContent"></div>
+                <button class="btn-play-phase" onclick="playCurrentPhase()">▶️ Jogar Fase</button>
             </div>
         </div>
 

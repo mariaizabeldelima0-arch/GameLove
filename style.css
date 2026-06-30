@@ -196,20 +196,10 @@ button {
     width: 100%;
 }
 
-/* Cards de Fase no Caminho */
-.phase-card-path {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    width: 100%;
-    max-width: 400px;
-    animation: slideIn 0.6s ease;
-}
-
+/* Círculos de Fases em Coluna */
 .phase-circle {
-    min-width: 80px;
-    width: 80px;
-    height: 80px;
+    width: 90px;
+    height: 90px;
     border-radius: 50%;
     display: flex;
     flex-direction: column;
@@ -218,33 +208,38 @@ button {
     cursor: pointer;
     transition: all 0.3s ease;
     font-weight: bold;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.25);
     position: relative;
-    border: 3px solid white;
+    border: 4px solid white;
+    animation: slideIn 0.6s ease;
 }
 
 .phase-circle .phase-number {
-    font-size: 2em;
+    font-size: 2.2em;
     font-weight: bold;
+    line-height: 1;
 }
 
 .phase-circle .phase-emoji {
-    font-size: 1.5em;
-    margin-top: -5px;
+    font-size: 1.8em;
+    margin-bottom: 5px;
 }
 
 /* Fase desbloqueada */
 .phase-circle.unlocked {
     background: linear-gradient(135deg, #2ECC71, #27AE60);
     color: white;
-    cursor: pointer;
     border-color: #FFD700;
     animation: pulse 2s infinite;
 }
 
 .phase-circle.unlocked:hover {
-    transform: scale(1.1);
-    box-shadow: 0 8px 20px rgba(46, 204, 113, 0.5);
+    transform: scale(1.15);
+    box-shadow: 0 10px 25px rgba(46, 204, 113, 0.6);
+}
+
+.phase-circle.unlocked:active {
+    transform: scale(0.95);
 }
 
 /* Fase bloqueada */
@@ -252,51 +247,150 @@ button {
     background: linear-gradient(135deg, #95a5a6, #7f8c8d);
     color: white;
     cursor: not-allowed;
-    opacity: 0.7;
+    opacity: 0.65;
+    border-color: #555;
 }
 
-/* Info da Fase */
-.phase-info-path {
-    flex: 1;
+.phase-circle.locked:hover {
+    transform: scale(1.05);
+}
+
+/* Modal de Detalhes */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
     background: white;
-    padding: 15px;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    min-width: 200px;
-}
-
-.phase-info-path h3 {
-    color: var(--dark);
-    margin: 0 0 8px 0;
-    font-size: 1.1em;
-}
-
-.phase-info-path p {
-    color: #666;
-    font-size: 0.85em;
-    margin: 5px 0;
-    line-height: 1.4;
-}
-
-.phase-status-badge {
-    display: inline-block;
-    padding: 4px 10px;
+    padding: 30px;
     border-radius: 20px;
-    font-size: 0.75em;
-    font-weight: bold;
-    margin-top: 8px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: slideUp 0.3s ease;
 }
 
-.phase-status-badge.unlocked {
+.modal-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: #f0f0f0;
+    border: none;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    font-size: 1.5em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+    background: #e0e0e0;
+    transform: scale(1.1);
+}
+
+#phaseDetailContent {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+#phaseDetailContent h2 {
+    color: var(--dark);
+    font-size: 1.8em;
+    margin: 15px 0;
+}
+
+#phaseDetailContent .detail-emoji {
+    font-size: 3em;
+    margin: 10px 0;
+}
+
+#phaseDetailContent p {
+    color: #666;
+    font-size: 1em;
+    margin: 10px 0;
+    line-height: 1.5;
+}
+
+#phaseDetailContent .detail-badge {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 25px;
+    font-size: 0.9em;
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+#phaseDetailContent .detail-badge.unlocked {
     background: #E8F8F5;
     color: #27AE60;
-    border: 1px solid #27AE60;
+    border: 2px solid #27AE60;
 }
 
-.phase-status-badge.locked {
+#phaseDetailContent .detail-badge.locked {
     background: #FADBD8;
     color: #C0392B;
-    border: 1px solid #C0392B;
+    border: 2px solid #C0392B;
+}
+
+.btn-play-phase {
+    width: 100%;
+    background: linear-gradient(135deg, #2ECC71, #27AE60);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 10px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-play-phase:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(46, 204, 113, 0.4);
+}
+
+.btn-play-phase:disabled {
+    background: #95a5a6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Decorações */
@@ -862,36 +956,21 @@ canvas {
     }
 
     .phases-path {
-        gap: 30px;
+        gap: 25px;
         padding: 20px 10px;
     }
 
-    .phase-card-path {
-        max-width: 100%;
-        gap: 15px;
-    }
-
     .phase-circle {
-        min-width: 70px;
-        width: 70px;
-        height: 70px;
+        width: 75px;
+        height: 75px;
     }
 
     .phase-circle .phase-number {
-        font-size: 1.5em;
+        font-size: 1.8em;
     }
 
     .phase-circle .phase-emoji {
-        font-size: 1.2em;
-    }
-
-    .phase-info-path {
-        padding: 12px;
-        min-width: auto;
-    }
-
-    .phase-info-path h3 {
-        font-size: 1em;
+        font-size: 1.4em;
     }
 
     .phases-footer {
@@ -907,6 +986,20 @@ canvas {
 
     .decoration-left, .decoration-right {
         font-size: 2em;
+    }
+
+    .modal-content {
+        padding: 25px;
+        border-radius: 15px;
+    }
+
+    #phaseDetailContent h2 {
+        font-size: 1.5em;
+    }
+
+    .btn-play-phase {
+        padding: 12px;
+        font-size: 1em;
     }
 
     .mobile-controls {
@@ -1037,47 +1130,23 @@ canvas {
     }
 
     .phases-path {
-        gap: 25px;
+        gap: 20px;
         padding: 15px 5px;
     }
 
-    .phase-card-path {
-        flex-direction: column;
-        gap: 12px;
-    }
-
     .phase-circle {
-        min-width: 60px;
-        width: 60px;
-        height: 60px;
+        width: 65px;
+        height: 65px;
+        border: 3px solid white;
     }
 
     .phase-circle .phase-number {
-        font-size: 1.2em;
+        font-size: 1.6em;
     }
 
     .phase-circle .phase-emoji {
-        font-size: 1em;
-    }
-
-    .phase-info-path {
-        padding: 10px;
-        width: 100%;
-        text-align: center;
-    }
-
-    .phase-info-path h3 {
-        font-size: 0.95em;
-        margin-bottom: 5px;
-    }
-
-    .phase-info-path p {
-        font-size: 0.8em;
-    }
-
-    .phase-status-badge {
-        font-size: 0.7em;
-        padding: 3px 8px;
+        font-size: 1.2em;
+        margin-bottom: 3px;
     }
 
     .phases-footer {
@@ -1095,6 +1164,35 @@ canvas {
 
     .decoration-left, .decoration-right {
         font-size: 1.5em;
+    }
+
+    .modal-content {
+        padding: 20px;
+        width: 95%;
+        border-radius: 12px;
+    }
+
+    .modal-close {
+        width: 30px;
+        height: 30px;
+        font-size: 1.2em;
+    }
+
+    #phaseDetailContent h2 {
+        font-size: 1.3em;
+    }
+
+    #phaseDetailContent .detail-emoji {
+        font-size: 2.5em;
+    }
+
+    #phaseDetailContent p {
+        font-size: 0.95em;
+    }
+
+    .btn-play-phase {
+        padding: 10px;
+        font-size: 0.95em;
     }
 
     .title {
