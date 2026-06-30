@@ -20,6 +20,48 @@
                 </div>
 
                 <button class="btn-start" onclick="startGame()">Iniciar Jogo</button>
+                <button class="btn-instructions" onclick="showInstructions()">📖 Como Jogar</button>
+            </div>
+        </div>
+
+        <!-- Tela de Instruções -->
+        <div id="instructionsScreen" class="screen">
+            <div class="instructions-container">
+                <h2>📖 Como Jogar</h2>
+                <div class="instructions-content">
+                    <h3>🎮 Objetivo</h3>
+                    <p>Ajude Alan a coletar todos os Equipamentos de Proteção Individual (EPIs) que caem do céu!</p>
+
+                    <h3>🕹️ Controles</h3>
+                    <ul>
+                        <li><strong>← → Setas</strong> - Mover Alan esquerda/direita</li>
+                        <li><strong>A / D</strong> - Mover alternativo</li>
+                        <li><strong>Mouse</strong> - Mover Alan na direção do mouse</li>
+                    </ul>
+
+                    <h3>⚠️ Cuidado!</h3>
+                    <p>Detritos caem do céu (pregos, madeira, vidro)! Evite-os ou perca vida!</p>
+
+                    <h3>🛡️ Equipamentos para Coletar</h3>
+                    <ul>
+                        <li>🥽 <strong>Óculos de Proteção</strong> - Protege os olhos</li>
+                        <li>🧤 <strong>Luvas</strong> - Protege as mãos</li>
+                        <li>🎽 <strong>Cinto de Segurança</strong> - Proteção corporal</li>
+                        <li>👂 <strong>Protetor Auricular</strong> - Protege audição</li>
+                        <li>🟡 <strong>Capacete</strong> - Proteção de cabeça</li>
+                    </ul>
+
+                    <h3>⭐ Como Completar a Fase</h3>
+                    <p>Colete TODOS os 5 EPIs antes do tempo acabar! Cada EPI coletado aparecerá no Alan.</p>
+
+                    <h3>💡 Dicas</h3>
+                    <ul>
+                        <li>Fique atento - Maria (💙) está jogando as coisas!</li>
+                        <li>Quanto mais rápido coletar, melhor!</li>
+                        <li>Não deixe Alan ser atingido pelos detritos!</li>
+                    </ul>
+                </div>
+                <button class="btn-back" onclick="backToMenu()">← Voltar</button>
             </div>
         </div>
 
@@ -36,31 +78,17 @@
         <div id="gameScreen" class="screen">
             <canvas id="gameCanvas"></canvas>
             <div id="gameUI">
-                <div class="phase-info" id="phaseInfo"></div>
-                <div class="controls-info">
-                    ← → para mover | ESPAÇO para pular | MOUSE para mini-games
+                <div class="game-header">
+                    <div class="phase-info" id="phaseInfo"></div>
+                    <div class="game-stats">
+                        <div class="stat">❤️ Vida: <span id="lifeCount">3</span></div>
+                        <div class="stat">⏱️ Tempo: <span id="timeCount">60</span>s</div>
+                    </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Mini-game de Perguntas -->
-        <div id="quizScreen" class="screen">
-            <div class="quiz-container">
-                <h3 id="quizTitle">Pergunta de Segurança</h3>
-                <p id="quizQuestion"></p>
-                <div class="quiz-options" id="quizOptions"></div>
-                <button class="btn-back" onclick="backToGame()">Sair do Quiz</button>
-            </div>
-        </div>
-
-        <!-- Mini-game de Nós -->
-        <div id="knotScreen" class="screen">
-            <div class="knot-container">
-                <h3>Aprenda o Nó 8</h3>
-                <canvas id="knotCanvas"></canvas>
-                <p id="knotInstruction"></p>
-                <button id="knotSubmit" class="btn-submit" onclick="checkKnot()" style="display: none;">Verificar</button>
-                <button class="btn-back" onclick="backToGame()">← Voltar</button>
+                <div class="equipment-tracker">
+                    <h4>Equipamentos Coletados:</h4>
+                    <div class="equipment-list" id="equipmentList"></div>
+                </div>
             </div>
         </div>
 
@@ -71,6 +99,16 @@
                 <p id="completeMessage"></p>
                 <p id="nextPhase"></p>
                 <button class="btn-next" onclick="nextPhase()">Próxima Fase</button>
+            </div>
+        </div>
+
+        <!-- Tela de Game Over -->
+        <div id="gameOverScreen" class="screen">
+            <div class="game-over-container">
+                <h2>💔 Game Over</h2>
+                <p id="gameOverMessage"></p>
+                <button class="btn-retry" onclick="retryPhase()">Tentar Novamente</button>
+                <button class="btn-back" onclick="backToPhaseSelect()">Voltar às Fases</button>
             </div>
         </div>
 
@@ -85,7 +123,6 @@
     </div>
 
     <script src="phases.js"></script>
-    <script src="miniGames.js"></script>
-    <script src="game.js"></script>
+    <script src="game-epi.js"></script>
 </body>
 </html>
