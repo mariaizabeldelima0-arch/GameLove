@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alan's Career Game - FG Empreendimentos</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <!-- Menu Principal -->
+        <div id="mainMenu" class="screen active">
+            <div class="menu-content">
+                <h1 class="title">🏗️ Alan's Career Journey</h1>
+                <p class="subtitle">FG Empreendimentos - Segurança do Trabalho</p>
+
+                <div class="player-info">
+                    <p><strong>Bem-vindo, Alan (Diego)!</strong></p>
+                    <p class="date">Hoje: 30/06/2026</p>
+                </div>
+
+                <button class="btn-start" onclick="startGame()">Iniciar Jogo</button>
+            </div>
+        </div>
+
+        <!-- Tela de Seleção de Fases -->
+        <div id="phaseSelect" class="screen">
+            <div class="phases-container">
+                <h2>📍 Suas Fases de Carreira</h2>
+                <div class="phases-grid" id="phasesGrid"></div>
+                <button class="btn-back" onclick="backToMenu()">← Voltar</button>
+            </div>
+        </div>
+
+        <!-- Canvas do Jogo -->
+        <div id="gameScreen" class="screen">
+            <canvas id="gameCanvas"></canvas>
+            <div id="gameUI">
+                <div class="phase-info" id="phaseInfo"></div>
+                <div class="controls-info">
+                    ← → para mover | ESPAÇO para pular | MOUSE para mini-games
+                </div>
+            </div>
+        </div>
+
+        <!-- Mini-game de Perguntas -->
+        <div id="quizScreen" class="screen">
+            <div class="quiz-container">
+                <h3 id="quizTitle">Pergunta de Segurança</h3>
+                <p id="quizQuestion"></p>
+                <div class="quiz-options" id="quizOptions"></div>
+                <button class="btn-back" onclick="backToGame()">Sair do Quiz</button>
+            </div>
+        </div>
+
+        <!-- Mini-game de Nós -->
+        <div id="knotScreen" class="screen">
+            <div class="knot-container">
+                <h3>Aprenda o Nó 8</h3>
+                <canvas id="knotCanvas"></canvas>
+                <p id="knotInstruction"></p>
+                <button id="knotSubmit" class="btn-submit" onclick="checkKnot()" style="display: none;">Verificar</button>
+                <button class="btn-back" onclick="backToGame()">← Voltar</button>
+            </div>
+        </div>
+
+        <!-- Tela de Conclusão -->
+        <div id="completeScreen" class="screen">
+            <div class="complete-container">
+                <h2>✨ Fase Concluída!</h2>
+                <p id="completeMessage"></p>
+                <p id="nextPhase"></p>
+                <button class="btn-next" onclick="nextPhase()">Próxima Fase</button>
+            </div>
+        </div>
+
+        <!-- Tela Bloqueada -->
+        <div id="lockedScreen" class="screen">
+            <div class="locked-container">
+                <h2>🔒 Fase Bloqueada</h2>
+                <p id="lockedMessage"></p>
+                <button class="btn-back" onclick="backToPhaseSelect()">← Voltar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="phases.js"></script>
+    <script src="miniGames.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
