@@ -598,12 +598,16 @@ function displayPhases() {
     const phases = getAllPhases();
     console.log(`displayPhases: Creating ${phases.length} phases`);
 
-    phases.forEach((phase) => {
+    // EPIs nas plataformas (como na referência): óculos, cinturão, colete, capacete
+    const EPI_MARKERS = ['🥽', '🎽', '🦺', '⛑️'];
+
+    phases.forEach((phase, index) => {
         console.log(`  Creating phase circle for: ${phase.title}`);
+        const markerIcon = EPI_MARKERS[index] || phase.emoji;
         const phaseCircle = document.createElement('div');
         phaseCircle.className = `phase-circle ${phase.unlocked ? 'unlocked' : 'locked'}`;
         phaseCircle.innerHTML = `
-            <div class="phase-emoji">${phase.emoji}</div>
+            <div class="phase-emoji">${markerIcon}</div>
             <div class="phase-number">${phase.id}</div>
         `;
 
@@ -814,23 +818,22 @@ function drawPhaseSelectScene() {
 
     // Oceano (água turquesa) cobrindo todo o fundo
     const ocean = ctx.createLinearGradient(0, 0, W, H);
-    ocean.addColorStop(0, '#3FCBCB');
+    ocean.addColorStop(0, '#43D0D0');
     ocean.addColorStop(0.5, '#27ADAD');
-    ocean.addColorStop(1, '#1C9494');
+    ocean.addColorStop(1, '#1B9090');
     ctx.fillStyle = ocean;
     ctx.fillRect(0, 0, W, H);
 
     drawOceanTexture(ctx, W, H);
 
-    // Ilha de areia no centro
+    // Ilha de areia (preenche quase toda a tela, água só nos cantos)
     drawSandIsland(ctx, W, H);
 
     // Caminho sinuoso de concreto
     drawWindingRoad(ctx, W, H);
 
-    // Canteiros de obras nas laterais
-    drawConstructionSide(ctx, W, H, 'left');
-    drawConstructionSide(ctx, W, H, 'right');
+    // Canteiro de obras (prédios, guindastes, caminhões, operários)
+    drawConstructionScene(ctx, W, H);
 
     // Sol
     ctx.save();
@@ -838,7 +841,7 @@ function drawPhaseSelectScene() {
     ctx.shadowBlur = 45;
     ctx.fillStyle = '#FFD23F';
     ctx.beginPath();
-    ctx.arc(W - 75, 72, 38, 0, Math.PI * 2);
+    ctx.arc(W - 78, 66, 34, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
 }
@@ -860,29 +863,33 @@ function drawOceanTexture(ctx, W, H) {
 function drawSandIsland(ctx, W, H) {
     const cx = W / 2;
     const cy = H / 2;
-    const rx = W * 0.47;
-    const ry = H * 0.49;
+    // Elipse maior que a tela: sobra água só nos cantos (canteiro cheio)
+    const rx = W * 0.58;
+    const ry = H * 0.62;
 
-    // Sombra da ilha na água
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.12)';
-    ctx.beginPath();
-    ctx.ellipse(cx + 12, cy + 18, rx, ry, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Faixa de praia (borda clara)
-    ctx.fillStyle = '#F2E4BC';
+    // Espuma / praia molhada (borda clara)
+    ctx.fillStyle = '#F2E6C2';
     ctx.beginPath();
     ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
     ctx.fill();
 
     // Areia principal
-    const sand = ctx.createLinearGradient(0, cy - ry, 0, cy + ry);
-    sand.addColorStop(0, '#EAD7A2');
-    sand.addColorStop(1, '#D7BE82');
+    const sand = ctx.createRadialGradient(cx, cy, ry * 0.2, cx, cy, ry);
+    sand.addColorStop(0, '#EFDCA8');
+    sand.addColorStop(1, '#D8C08A');
     ctx.fillStyle = sand;
     ctx.beginPath();
-    ctx.ellipse(cx, cy, rx - 16, ry - 16, 0, 0, Math.PI * 2);
+    ctx.ellipse(cx, cy, rx - 22, ry - 22, 0, 0, Math.PI * 2);
     ctx.fill();
+
+    // Manchas de terra/areia batida
+    ctx.fillStyle = 'rgba(180, 155, 110, 0.20)';
+    const spots = [[0.2, 0.35], [0.3, 0.72], [0.72, 0.4], [0.8, 0.7], [0.5, 0.2]];
+    spots.forEach(s => {
+        ctx.beginPath();
+        ctx.ellipse(s[0] * W, s[1] * H, 55, 26, 0, 0, Math.PI * 2);
+        ctx.fill();
+    });
 }
 
 function drawWindingRoad(ctx, W, H) {
@@ -898,13 +905,17 @@ function drawWindingRoad(ctx, W, H) {
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
 
-    // Borda da estrada
+    // Sombra da estrada
+    ctx.strokeStyle = 'rgba(0,0,0,0.10)';
+    ctx.lineWidth = 74;
+    ctx.stroke(path);
+    // Meio-fio
     ctx.strokeStyle = '#8E8E84';
-    ctx.lineWidth = 66;
+    ctx.lineWidth = 68;
     ctx.stroke(path);
     // Asfalto/concreto
-    ctx.strokeStyle = '#B9B9AE';
-    ctx.lineWidth = 54;
+    ctx.strokeStyle = '#BBBBB0';
+    ctx.lineWidth = 56;
     ctx.stroke(path);
     // Linha central tracejada
     ctx.setLineDash([18, 22]);
@@ -914,111 +925,264 @@ function drawWindingRoad(ctx, W, H) {
     ctx.setLineDash([]);
 }
 
-// Bloco de prédio em estilo pseudo-isométrico
-function drawBuilding(ctx, x, baseY, w, h, color, label) {
-    const depth = w * 0.32;
-
-    // Face lateral direita (mais escura)
-    ctx.fillStyle = shadeColor(color, -32);
-    ctx.beginPath();
-    ctx.moveTo(x + w, baseY);
-    ctx.lineTo(x + w + depth, baseY - depth * 0.55);
-    ctx.lineTo(x + w + depth, baseY - depth * 0.55 - h);
-    ctx.lineTo(x + w, baseY - h);
-    ctx.closePath();
-    ctx.fill();
-
-    // Topo (mais claro)
-    ctx.fillStyle = shadeColor(color, 22);
-    ctx.beginPath();
-    ctx.moveTo(x, baseY - h);
-    ctx.lineTo(x + w, baseY - h);
-    ctx.lineTo(x + w + depth, baseY - depth * 0.55 - h);
-    ctx.lineTo(x + depth, baseY - depth * 0.55 - h);
-    ctx.closePath();
-    ctx.fill();
-
-    // Face frontal
+// ---- Utilitários de desenho isométrico ----
+function fillPoly(ctx, pts, color) {
     ctx.fillStyle = color;
-    ctx.fillRect(x, baseY - h, w, h);
+    ctx.beginPath();
+    ctx.moveTo(pts[0][0], pts[0][1]);
+    for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+    ctx.closePath();
+    ctx.fill();
+}
 
-    // Janelas
-    ctx.fillStyle = 'rgba(110, 135, 160, 0.5)';
-    const cols = Math.max(2, Math.floor(w / 20));
-    const rows = Math.max(2, Math.floor(h / 24));
-    const gapX = w / cols;
-    const gapY = h / rows;
+// Grade de janelas numa parede isométrica (P0 = canto frontal, P1 = canto lateral)
+function drawIsoWindows(ctx, P0, P1, height, floors) {
+    const cols = 3;
+    const rows = Math.max(2, floors);
+    const pt = (u, v) => [
+        P0[0] + (P1[0] - P0[0]) * u,
+        P0[1] + (P1[1] - P0[1]) * u - height * v
+    ];
+    ctx.fillStyle = 'rgba(70, 92, 115, 0.55)';
     for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
-            ctx.fillRect(x + c * gapX + gapX * 0.22, baseY - h + r * gapY + gapY * 0.22,
-                gapX * 0.56, gapY * 0.5);
+            const u0 = (c + 0.24) / cols, u1 = (c + 0.76) / cols;
+            const v0 = (r + 0.28) / rows, v1 = (r + 0.74) / rows;
+            fillPoly(ctx, [pt(u0, v0), pt(u1, v0), pt(u1, v1), pt(u0, v1)],
+                'rgba(70, 92, 115, 0.5)');
         }
     }
+}
 
-    // Logo FG
-    if (label) {
+// Prédio de concreto em construção (isométrico)
+function isoBuilding(ctx, cx, baseY, w, floors, opts) {
+    opts = opts || {};
+    // Altura do andar proporcional à largura -> proporções corretas em qualquer tela
+    const floorH = opts.floorH || Math.max(7, w * 0.34);
+    const height = floors * floorH;
+    const hh = w * 0.5;
+
+    const bottom = [cx, baseY];
+    const right = [cx + w, baseY - hh];
+    const left = [cx - w, baseY - hh];
+    const back = [cx, baseY - w];
+
+    // Sombra no chão
+    ctx.fillStyle = 'rgba(0,0,0,0.10)';
+    ctx.beginPath();
+    ctx.moveTo(bottom[0], bottom[1] + 4);
+    ctx.lineTo(right[0] + 5, right[1] + 4);
+    ctx.lineTo(back[0], back[1] + 4);
+    ctx.lineTo(left[0] - 5, left[1] + 4);
+    ctx.closePath();
+    ctx.fill();
+
+    const base = opts.color || '#C6C6BC';
+    const leftColor = shadeColor(base, -36);
+    const rightColor = shadeColor(base, -12);
+    const topColor = shadeColor(base, 20);
+
+    const bT = [bottom[0], bottom[1] - height];
+    const rT = [right[0], right[1] - height];
+    const lT = [left[0], left[1] - height];
+    const kT = [back[0], back[1] - height];
+
+    // Parede direita
+    fillPoly(ctx, [bottom, right, rT, bT], rightColor);
+    drawIsoWindows(ctx, bottom, right, height, floors);
+    // Parede esquerda
+    fillPoly(ctx, [bottom, left, lT, bT], leftColor);
+    drawIsoWindows(ctx, bottom, left, height, floors);
+    // Laje/topo
+    fillPoly(ctx, [bT, rT, kT, lT], topColor);
+
+    // Ferragens/pilares no topo (em construção)
+    ctx.strokeStyle = 'rgba(70,70,62,0.75)';
+    ctx.lineWidth = 1.3;
+    const tops = [bT, rT, kT, lT, [(bT[0] + kT[0]) / 2, (bT[1] + kT[1]) / 2]];
+    tops.forEach(t => {
+        ctx.beginPath();
+        ctx.moveTo(t[0], t[1]);
+        ctx.lineTo(t[0], t[1] - 9);
+        ctx.stroke();
+    });
+
+    // Logo FG na parede direita
+    if (opts.label) {
+        const mx = (bottom[0] + right[0]) / 2;
+        const my = (bottom[1] + right[1]) / 2 - height * 0.5;
         ctx.fillStyle = '#2C5AA0';
-        ctx.font = `bold ${Math.round(h * 0.18)}px Arial`;
+        ctx.font = `bold ${Math.round(w * 0.42)}px Arial`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText('FG', x + w / 2, baseY - h * 0.5);
+        ctx.fillText('FG', mx, my);
     }
 }
 
-// Guindaste amarelo de construção
-function drawCrane(ctx, x, baseY, h) {
-    ctx.fillStyle = '#F2B705';
-    // Mastro
-    ctx.fillRect(x - 4, baseY - h, 8, h);
-    // Lança (braço horizontal)
-    ctx.fillRect(x - 6, baseY - h, 72, 7);
-    // Contra-lança
-    ctx.fillRect(x - 34, baseY - h, 28, 7);
+// Guindaste torre em treliça
+function isoCrane(ctx, cx, baseY, h) {
+    const c = '#F2A81E';
+    const top = baseY - h;
+
+    // Sombra
+    ctx.fillStyle = 'rgba(0,0,0,0.10)';
+    ctx.beginPath();
+    ctx.ellipse(cx, baseY, 14, 6, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Mastro (dois trilhos + treliça)
+    ctx.strokeStyle = c;
+    ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(cx - 5, baseY); ctx.lineTo(cx - 5, top); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx + 5, baseY); ctx.lineTo(cx + 5, top); ctx.stroke();
+    ctx.lineWidth = 1.1;
+    for (let y = baseY - 6; y > top; y -= 11) {
+        ctx.beginPath(); ctx.moveTo(cx - 5, y); ctx.lineTo(cx + 5, y - 6); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx + 5, y); ctx.lineTo(cx - 5, y - 6); ctx.stroke();
+    }
+
     // Cabine
-    ctx.fillRect(x - 7, baseY - h + 7, 14, 12);
-    // Cabo + gancho
-    ctx.strokeStyle = '#555';
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(x + 58, baseY - h + 7);
-    ctx.lineTo(x + 58, baseY - h + 34);
-    ctx.stroke();
-    ctx.fillStyle = '#444';
-    ctx.fillRect(x + 55, baseY - h + 34, 6, 7);
-    // Base
-    ctx.fillStyle = '#E0A800';
-    ctx.fillRect(x - 10, baseY - 6, 20, 6);
-}
+    ctx.fillStyle = c;
+    ctx.fillRect(cx - 7, top - 9, 14, 10);
 
-// Caminhão amarelo
-function drawTruck(ctx, x, y) {
-    ctx.fillStyle = '#F2B705';
-    ctx.fillRect(x, y, 36, 16);
-    ctx.fillStyle = '#E0A800';
-    ctx.fillRect(x + 26, y - 9, 12, 9);
-    ctx.fillStyle = '#333';
-    ctx.beginPath();
-    ctx.arc(x + 9, y + 18, 5, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(x + 28, y + 18, 5, 0, Math.PI * 2);
-    ctx.fill();
-}
-
-function drawConstructionSide(ctx, W, H, side) {
-    if (side === 'left') {
-        drawBuilding(ctx, W * 0.05, H * 0.42, W * 0.13, H * 0.22, '#CBCBC0', 'FG');
-        drawCrane(ctx, W * 0.22, H * 0.30, H * 0.17);
-        drawBuilding(ctx, W * 0.03, H * 0.74, W * 0.12, H * 0.18, '#BEBEB3', 'FG');
-        drawBuilding(ctx, W * 0.18, H * 0.90, W * 0.10, H * 0.12, '#D4D4C9');
-        drawTruck(ctx, W * 0.25, H * 0.56);
-    } else {
-        drawBuilding(ctx, W * 0.80, H * 0.40, W * 0.13, H * 0.22, '#CBCBC0', 'FG');
-        drawCrane(ctx, W * 0.80, H * 0.28, H * 0.17);
-        drawBuilding(ctx, W * 0.83, H * 0.72, W * 0.12, H * 0.18, '#BEBEB3', 'FG');
-        drawBuilding(ctx, W * 0.71, H * 0.88, W * 0.10, H * 0.12, '#D4D4C9');
-        drawTruck(ctx, W * 0.70, H * 0.54);
+    const jib = 72;
+    const apex = top - 18;
+    // Lança (braço) e contra-lança
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = c;
+    ctx.beginPath(); ctx.moveTo(cx, top - 3); ctx.lineTo(cx + jib, top - 3); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx, top - 3); ctx.lineTo(cx - 26, top - 3); ctx.stroke();
+    // Treliça da lança
+    ctx.lineWidth = 1.1;
+    for (let i = 0; i < 8; i++) {
+        const x = cx + i * (jib / 8);
+        ctx.beginPath();
+        ctx.moveTo(x, top - 3);
+        ctx.lineTo(x + jib / 8, top + 3);
+        ctx.stroke();
     }
+    ctx.beginPath(); ctx.moveTo(cx, top + 3); ctx.lineTo(cx + jib, top - 1); ctx.stroke();
+    // Tirantes até o apex
+    ctx.beginPath(); ctx.moveTo(cx, apex); ctx.lineTo(cx + jib, top - 3); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx, apex); ctx.lineTo(cx - 26, top - 3); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx, top - 3); ctx.lineTo(cx, apex); ctx.stroke();
+    // Contrapeso
+    ctx.fillStyle = '#C98A12';
+    ctx.fillRect(cx - 30, top - 7, 9, 11);
+    // Cabo + carga
+    ctx.strokeStyle = '#555';
+    ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.moveTo(cx + jib - 8, top - 3); ctx.lineTo(cx + jib - 8, top + 20); ctx.stroke();
+    ctx.fillStyle = '#7A5230';
+    ctx.fillRect(cx + jib - 14, top + 20, 13, 8);
+}
+
+// Caminhão basculante pequeno
+function drawTruckSmall(ctx, cx, baseY, s) {
+    s = s || 1;
+    ctx.save();
+    ctx.translate(cx, baseY);
+    ctx.scale(s, s);
+    // Sombra
+    ctx.fillStyle = 'rgba(0,0,0,0.12)';
+    ctx.beginPath();
+    ctx.ellipse(4, 3, 22, 6, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // Caçamba
+    ctx.fillStyle = '#E7A80E';
+    ctx.fillRect(-16, -12, 26, 12);
+    ctx.fillStyle = '#C98A12';
+    ctx.fillRect(-16, -12, 26, 3);
+    // Cabine
+    ctx.fillStyle = '#F2BE33';
+    ctx.fillRect(10, -10, 11, 10);
+    ctx.fillStyle = 'rgba(120,150,180,0.9)';
+    ctx.fillRect(12, -8, 6, 5);
+    // Rodas
+    ctx.fillStyle = '#333';
+    [-9, 3, 16].forEach(wx => {
+        ctx.beginPath();
+        ctx.arc(wx, 1, 4, 0, Math.PI * 2);
+        ctx.fill();
+    });
+    ctx.restore();
+}
+
+// Operário minúsculo (capacete + corpo)
+function drawWorker(ctx, x, y) {
+    ctx.fillStyle = '#E8A200';
+    ctx.beginPath();
+    ctx.arc(x, y - 6, 2.2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#3A4A5A';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(x, y - 5);
+    ctx.lineTo(x, y - 1);
+    ctx.stroke();
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x, y - 1); ctx.lineTo(x - 2, y + 2);
+    ctx.moveTo(x, y - 1); ctx.lineTo(x + 2, y + 2);
+    ctx.stroke();
+}
+
+// Monta o canteiro inteiro com ordenação de profundidade (trás -> frente)
+function drawConstructionScene(ctx, W, H) {
+    const grays = ['#C9C9BF', '#C0C0B6', '#D3D3C9', '#BFC1BB'];
+    const props = [];
+
+    const B = (fx, fy, wf, floors, label, ci) => props.push({
+        z: fy * H, fn: () => isoBuilding(ctx, fx * W, fy * H, W * wf, floors,
+            { color: grays[ci % grays.length], label })
+    });
+    const C = (fx, fy, hf) => props.push({
+        z: fy * H, fn: () => isoCrane(ctx, fx * W, fy * H, H * hf)
+    });
+    const T = (fx, fy, s) => props.push({
+        z: fy * H, fn: () => drawTruckSmall(ctx, fx * W, fy * H, s)
+    });
+    const P = (fx, fy) => props.push({
+        z: fy * H, fn: () => drawWorker(ctx, fx * W, fy * H)
+    });
+
+    // ----- LADO ESQUERDO -----
+    C(0.29, 0.24, 0.20);
+    C(0.11, 0.13, 0.16);
+    B(0.10, 0.31, 0.040, 6, true, 0);
+    B(0.25, 0.27, 0.032, 4, false, 1);
+    B(0.06, 0.51, 0.044, 7, true, 2);
+    B(0.22, 0.47, 0.030, 4, false, 3);
+    B(0.12, 0.71, 0.042, 6, true, 1);
+    B(0.28, 0.65, 0.028, 3, false, 0);
+    B(0.09, 0.89, 0.036, 5, false, 2);
+    B(0.26, 0.85, 0.030, 4, true, 3);
+    T(0.20, 0.57, 1.0);
+    T(0.15, 0.60, 0.8);
+    T(0.31, 0.52, 0.8);
+
+    // ----- LADO DIREITO (espelhado) -----
+    C(0.71, 0.24, 0.20);
+    C(0.89, 0.13, 0.16);
+    B(0.90, 0.31, 0.040, 6, true, 1);
+    B(0.75, 0.27, 0.032, 4, false, 0);
+    B(0.94, 0.51, 0.044, 7, true, 3);
+    B(0.78, 0.47, 0.030, 4, false, 2);
+    B(0.88, 0.71, 0.042, 6, true, 0);
+    B(0.72, 0.65, 0.028, 3, false, 1);
+    B(0.91, 0.89, 0.036, 5, false, 3);
+    B(0.74, 0.85, 0.030, 4, true, 2);
+    T(0.80, 0.57, 1.0);
+    T(0.85, 0.60, 0.8);
+    T(0.69, 0.52, 0.8);
+
+    // ----- Operários espalhados -----
+    [[0.35, 0.32], [0.37, 0.56], [0.34, 0.74], [0.40, 0.42], [0.63, 0.36],
+     [0.64, 0.60], [0.61, 0.72], [0.66, 0.47], [0.49, 0.54], [0.51, 0.30],
+     [0.52, 0.80], [0.46, 0.66]].forEach(w => P(w[0], w[1]));
+
+    props.sort((a, b) => a.z - b.z);
+    props.forEach(p => p.fn());
 }
 
 document.addEventListener('DOMContentLoaded', () => {
