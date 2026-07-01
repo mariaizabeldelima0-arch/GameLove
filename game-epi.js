@@ -614,6 +614,11 @@ function displayPhases() {
 
         phasesPath.appendChild(phaseCircle);
     });
+
+    // Posicionar os círculos sobre o caminho (se o canvas já estiver dimensionado)
+    if (typeof positionPhaseCircles === 'function') {
+        positionPhaseCircles();
+    }
     console.log('displayPhases: Complete');
 }
 
@@ -749,12 +754,41 @@ function showScreen(screenId) {
     document.getElementById(screenId).classList.add('active');
 }
 
+// Pontos do caminho sinuoso (frações da tela) — compartilhados entre o
+// desenho da estrada no canvas e o posicionamento dos círculos de fase.
+const PHASE_PATH_POINTS = [
+    { x: 0.55, y: 0.20 },
+    { x: 0.42, y: 0.42 },
+    { x: 0.57, y: 0.63 },
+    { x: 0.45, y: 0.84 }
+];
+
+// Posiciona os círculos de fase (HTML) exatamente sobre o caminho do canvas
+function positionPhaseCircles() {
+    const circles = document.querySelectorAll('#phasesPath .phase-circle');
+    circles.forEach((circle, i) => {
+        const p = PHASE_PATH_POINTS[i] || PHASE_PATH_POINTS[PHASE_PATH_POINTS.length - 1];
+        circle.style.left = (p.x * 100) + '%';
+        circle.style.top = (p.y * 100) + '%';
+    });
+}
+
+// Clarear/escurecer uma cor hex para faces 3D
+function shadeColor(hex, amt) {
+    const c = hex.replace('#', '');
+    let r = parseInt(c.substr(0, 2), 16) + amt;
+    let g = parseInt(c.substr(2, 2), 16) + amt;
+    let b = parseInt(c.substr(4, 2), 16) + amt;
+    r = Math.max(0, Math.min(255, r));
+    g = Math.max(0, Math.min(255, g));
+    b = Math.max(0, Math.min(255, b));
+    return `rgb(${r}, ${g}, ${b})`;
+}
+
 // Desenhar cenário da página de fases
 function setupPhaseSelectCanvas() {
     const canvas = document.getElementById('phaseSelectCanvas');
     if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
 
     // Ajustar tamanho do canvas
     function resizeCanvas() {
@@ -762,6 +796,7 @@ function setupPhaseSelectCanvas() {
         canvas.width = container.offsetWidth;
         canvas.height = container.offsetHeight;
         drawPhaseSelectScene();
+        positionPhaseCircles();
     }
 
     resizeCanvas();
@@ -773,115 +808,216 @@ function drawPhaseSelectScene() {
     if (!canvas) return;
 
     const ctx = canvas.getContext('2d');
-    const width = canvas.width;
-    const height = canvas.height;
+    const W = canvas.width;
+    const H = canvas.height;
+    if (!W || !H) return;
 
-    // Céu azul degradê
-    const skyGradient = ctx.createLinearGradient(0, 0, 0, height * 0.6);
-    skyGradient.addColorStop(0, '#87CEEB');
-    skyGradient.addColorStop(1, '#E0F6FF');
-    ctx.fillStyle = skyGradient;
-    ctx.fillRect(0, 0, width, height * 0.6);
+    // Oceano (água turquesa) cobrindo todo o fundo
+    const ocean = ctx.createLinearGradient(0, 0, W, H);
+    ocean.addColorStop(0, '#3FCBCB');
+    ocean.addColorStop(0.5, '#27ADAD');
+    ocean.addColorStop(1, '#1C9494');
+    ctx.fillStyle = ocean;
+    ctx.fillRect(0, 0, W, H);
 
-    // Areia
-    ctx.fillStyle = '#D2B48C';
-    ctx.fillRect(0, height * 0.6, width, height * 0.25);
+    drawOceanTexture(ctx, W, H);
 
-    // Mar
-    ctx.fillStyle = '#4A90E2';
-    ctx.fillRect(0, height * 0.85, width, height * 0.15);
+    // Ilha de areia no centro
+    drawSandIsland(ctx, W, H);
 
-    // Nuvens
-    drawClouds(ctx, width, height);
+    // Caminho sinuoso de concreto
+    drawWindingRoad(ctx, W, H);
+
+    // Canteiros de obras nas laterais
+    drawConstructionSide(ctx, W, H, 'left');
+    drawConstructionSide(ctx, W, H, 'right');
 
     // Sol
-    ctx.fillStyle = '#FFD700';
+    ctx.save();
+    ctx.shadowColor = 'rgba(255, 210, 70, 0.7)';
+    ctx.shadowBlur = 45;
+    ctx.fillStyle = '#FFD23F';
     ctx.beginPath();
-    ctx.arc(width - 80, 60, 40, 0, Math.PI * 2);
+    ctx.arc(W - 75, 72, 38, 0, Math.PI * 2);
     ctx.fill();
-
-    // Prédios esquerda
-    drawBuildings(ctx, 20, height * 0.3, 'left');
-
-    // Prédios direita
-    drawBuildings(ctx, width - 120, height * 0.3, 'right');
-
-    // Ondas do mar
-    drawWaves(ctx, width, height * 0.85);
+    ctx.restore();
 }
 
-function drawClouds(ctx, width, height) {
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-
-    // Nuvem 1
-    ctx.beginPath();
-    ctx.arc(width * 0.2, height * 0.15, 30, 0, Math.PI * 2);
-    ctx.arc(width * 0.25, height * 0.12, 35, 0, Math.PI * 2);
-    ctx.arc(width * 0.3, height * 0.15, 30, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Nuvem 2
-    ctx.beginPath();
-    ctx.arc(width * 0.7, height * 0.2, 25, 0, Math.PI * 2);
-    ctx.arc(width * 0.74, height * 0.17, 30, 0, Math.PI * 2);
-    ctx.arc(width * 0.78, height * 0.2, 25, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Nuvem 3
-    ctx.beginPath();
-    ctx.arc(width * 0.5, height * 0.08, 20, 0, Math.PI * 2);
-    ctx.arc(width * 0.53, height * 0.06, 25, 0, Math.PI * 2);
-    ctx.arc(width * 0.56, height * 0.08, 20, 0, Math.PI * 2);
-    ctx.fill();
-}
-
-function drawBuildings(ctx, startX, startY, side) {
-    // Prédio 1 - maior
-    ctx.fillStyle = '#FF6B6B';
-    ctx.fillRect(startX, startY - 80, 60, 100);
-
-    // Janelas prédio 1
-    ctx.fillStyle = '#FFD700';
-    for (let i = 0; i < 4; i++) {
-        for (let j = 0; j < 3; j++) {
-            ctx.fillRect(startX + 8 + j * 18, startY - 70 + i * 20, 10, 10);
-        }
-    }
-
-    // Prédio 2 - médio
-    ctx.fillStyle = '#4ECDC4';
-    ctx.fillRect(startX + 70, startY - 60, 50, 80);
-
-    // Janelas prédio 2
-    ctx.fillStyle = '#FFD700';
-    for (let i = 0; i < 3; i++) {
-        for (let j = 0; j < 2; j++) {
-            ctx.fillRect(startX + 78 + j * 18, startY - 50 + i * 20, 10, 10);
-        }
-    }
-
-    // Prédio 3 - guindaste
-    ctx.fillStyle = '#8B4513';
-    ctx.fillRect(startX + 30, startY - 40, 8, 40);
-    ctx.strokeStyle = '#8B4513';
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.moveTo(startX + 34, startY - 40);
-    ctx.lineTo(startX + 70, startY - 35);
-    ctx.stroke();
-}
-
-function drawWaves(ctx, width, waveY) {
-    ctx.strokeStyle = 'rgba(100, 150, 220, 0.4)';
+function drawOceanTexture(ctx, W, H) {
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.16)';
     ctx.lineWidth = 2;
-
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 9; i++) {
+        const y = (i + 1) * H / 10;
         ctx.beginPath();
-        ctx.moveTo(0, waveY + i * 15);
-        for (let x = 0; x <= width; x += 20) {
-            ctx.quadraticCurveTo(x + 10, waveY - 5 + i * 15, x + 20, waveY + i * 15);
+        ctx.moveTo(0, y);
+        for (let x = 0; x <= W; x += 26) {
+            ctx.lineTo(x, y + Math.sin((x / 45) + i) * 4);
         }
         ctx.stroke();
+    }
+}
+
+function drawSandIsland(ctx, W, H) {
+    const cx = W / 2;
+    const cy = H / 2;
+    const rx = W * 0.47;
+    const ry = H * 0.49;
+
+    // Sombra da ilha na água
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.12)';
+    ctx.beginPath();
+    ctx.ellipse(cx + 12, cy + 18, rx, ry, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Faixa de praia (borda clara)
+    ctx.fillStyle = '#F2E4BC';
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Areia principal
+    const sand = ctx.createLinearGradient(0, cy - ry, 0, cy + ry);
+    sand.addColorStop(0, '#EAD7A2');
+    sand.addColorStop(1, '#D7BE82');
+    ctx.fillStyle = sand;
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, rx - 16, ry - 16, 0, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+function drawWindingRoad(ctx, W, H) {
+    const pts = PHASE_PATH_POINTS.map(p => ({ x: p.x * W, y: p.y * H }));
+
+    const path = new Path2D();
+    path.moveTo(pts[0].x, pts[0].y);
+    for (let i = 0; i < pts.length - 1; i++) {
+        const midY = (pts[i].y + pts[i + 1].y) / 2;
+        path.bezierCurveTo(pts[i].x, midY, pts[i + 1].x, midY, pts[i + 1].x, pts[i + 1].y);
+    }
+
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    // Borda da estrada
+    ctx.strokeStyle = '#8E8E84';
+    ctx.lineWidth = 66;
+    ctx.stroke(path);
+    // Asfalto/concreto
+    ctx.strokeStyle = '#B9B9AE';
+    ctx.lineWidth = 54;
+    ctx.stroke(path);
+    // Linha central tracejada
+    ctx.setLineDash([18, 22]);
+    ctx.strokeStyle = '#F4ECCC';
+    ctx.lineWidth = 4;
+    ctx.stroke(path);
+    ctx.setLineDash([]);
+}
+
+// Bloco de prédio em estilo pseudo-isométrico
+function drawBuilding(ctx, x, baseY, w, h, color, label) {
+    const depth = w * 0.32;
+
+    // Face lateral direita (mais escura)
+    ctx.fillStyle = shadeColor(color, -32);
+    ctx.beginPath();
+    ctx.moveTo(x + w, baseY);
+    ctx.lineTo(x + w + depth, baseY - depth * 0.55);
+    ctx.lineTo(x + w + depth, baseY - depth * 0.55 - h);
+    ctx.lineTo(x + w, baseY - h);
+    ctx.closePath();
+    ctx.fill();
+
+    // Topo (mais claro)
+    ctx.fillStyle = shadeColor(color, 22);
+    ctx.beginPath();
+    ctx.moveTo(x, baseY - h);
+    ctx.lineTo(x + w, baseY - h);
+    ctx.lineTo(x + w + depth, baseY - depth * 0.55 - h);
+    ctx.lineTo(x + depth, baseY - depth * 0.55 - h);
+    ctx.closePath();
+    ctx.fill();
+
+    // Face frontal
+    ctx.fillStyle = color;
+    ctx.fillRect(x, baseY - h, w, h);
+
+    // Janelas
+    ctx.fillStyle = 'rgba(110, 135, 160, 0.5)';
+    const cols = Math.max(2, Math.floor(w / 20));
+    const rows = Math.max(2, Math.floor(h / 24));
+    const gapX = w / cols;
+    const gapY = h / rows;
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+            ctx.fillRect(x + c * gapX + gapX * 0.22, baseY - h + r * gapY + gapY * 0.22,
+                gapX * 0.56, gapY * 0.5);
+        }
+    }
+
+    // Logo FG
+    if (label) {
+        ctx.fillStyle = '#2C5AA0';
+        ctx.font = `bold ${Math.round(h * 0.18)}px Arial`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('FG', x + w / 2, baseY - h * 0.5);
+    }
+}
+
+// Guindaste amarelo de construção
+function drawCrane(ctx, x, baseY, h) {
+    ctx.fillStyle = '#F2B705';
+    // Mastro
+    ctx.fillRect(x - 4, baseY - h, 8, h);
+    // Lança (braço horizontal)
+    ctx.fillRect(x - 6, baseY - h, 72, 7);
+    // Contra-lança
+    ctx.fillRect(x - 34, baseY - h, 28, 7);
+    // Cabine
+    ctx.fillRect(x - 7, baseY - h + 7, 14, 12);
+    // Cabo + gancho
+    ctx.strokeStyle = '#555';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(x + 58, baseY - h + 7);
+    ctx.lineTo(x + 58, baseY - h + 34);
+    ctx.stroke();
+    ctx.fillStyle = '#444';
+    ctx.fillRect(x + 55, baseY - h + 34, 6, 7);
+    // Base
+    ctx.fillStyle = '#E0A800';
+    ctx.fillRect(x - 10, baseY - 6, 20, 6);
+}
+
+// Caminhão amarelo
+function drawTruck(ctx, x, y) {
+    ctx.fillStyle = '#F2B705';
+    ctx.fillRect(x, y, 36, 16);
+    ctx.fillStyle = '#E0A800';
+    ctx.fillRect(x + 26, y - 9, 12, 9);
+    ctx.fillStyle = '#333';
+    ctx.beginPath();
+    ctx.arc(x + 9, y + 18, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(x + 28, y + 18, 5, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+function drawConstructionSide(ctx, W, H, side) {
+    if (side === 'left') {
+        drawBuilding(ctx, W * 0.05, H * 0.42, W * 0.13, H * 0.22, '#CBCBC0', 'FG');
+        drawCrane(ctx, W * 0.22, H * 0.30, H * 0.17);
+        drawBuilding(ctx, W * 0.03, H * 0.74, W * 0.12, H * 0.18, '#BEBEB3', 'FG');
+        drawBuilding(ctx, W * 0.18, H * 0.90, W * 0.10, H * 0.12, '#D4D4C9');
+        drawTruck(ctx, W * 0.25, H * 0.56);
+    } else {
+        drawBuilding(ctx, W * 0.80, H * 0.40, W * 0.13, H * 0.22, '#CBCBC0', 'FG');
+        drawCrane(ctx, W * 0.80, H * 0.28, H * 0.17);
+        drawBuilding(ctx, W * 0.83, H * 0.72, W * 0.12, H * 0.18, '#BEBEB3', 'FG');
+        drawBuilding(ctx, W * 0.71, H * 0.88, W * 0.10, H * 0.12, '#D4D4C9');
+        drawTruck(ctx, W * 0.70, H * 0.54);
     }
 }
 
